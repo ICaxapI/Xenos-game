@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * Created by Alex on 05.04.2017.
  */
 public class Animator {
-    private static final int FRAME_COLS = 6; // #1
-    private static final int FRAME_ROWS = 5; // #2
+    private static final int FRAME_COLS = 6; // 6
+    private static final int FRAME_ROWS = 5; // 5
 
     private Animation walkAnimation; // #3
     private Texture walkSheet; // #4
@@ -18,8 +18,8 @@ public class Animator {
     private TextureRegion currentFrame; // #7
     private float stateTime; // #8
 
-    public Animator() {
-        walkSheet = new Texture(Gdx.files.internal("animation_sheet.png")); // #9
+    public Animator(String textureurl) {
+        walkSheet = new Texture(Gdx.files.internal(textureurl)); // #9
         TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth()/FRAME_COLS, walkSheet.getHeight()/FRAME_ROWS); // #10
         walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
         int index = 0;
