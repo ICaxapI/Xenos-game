@@ -10,15 +10,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import javax.swing.*;
 
 public class Main extends ApplicationAdapter {
+    private ButtonMenu buttonContine;
+    private ButtonMenu buttonNewGame;
+    private ButtonMenu buttonOption;
+    private ButtonMenu buttonExit;
+    private ButtonMenu buttonBack;
+    private InputController controller;
 	SpriteBatch batch;
-	Texture logotex;
-	Texture buttonstex;
-	Animator runner;
-	Sprite logo;
-	float fade = 0f;
-	boolean completelogo = false;
-	boolean logoexit = false;
-	public Timer timer = new Timer(1000, e -> {
+	private Texture logotex;
+	private Texture buttonstex;
+	private Animator runner;
+	private Sprite logo;
+	private float fade = 0f;
+	private boolean completelogo = false;
+	private boolean logoexit = false;
+	private Timer timer = new Timer(1000, e -> {
 		completelogo = true;
 	});
 
@@ -33,7 +39,17 @@ public class Main extends ApplicationAdapter {
 		logo.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getWidth()/2);
 		logo.setPosition(0,((Gdx.graphics.getHeight()-(Gdx.graphics.getWidth()/2))/2));
 
+
+
 		buttonstex = new Texture(Gdx.files.internal("buttons/atlasbuttons.png"));
+        buttonContine = new ButtonMenu(buttonstex, 0, 174, 25);
+        buttonNewGame = new ButtonMenu(buttonstex, 1, 152, 25);
+        buttonOption = new ButtonMenu(buttonstex, 2, 85, 25);
+        buttonExit = new ButtonMenu(buttonstex, 3, 97, 25);
+        buttonBack = new ButtonMenu(buttonstex, 4, 90, 25);
+
+        controller = new InputController();
+        Gdx.input.setInputProcessor(controller);
 	}
 
 	@Override
@@ -42,7 +58,6 @@ public class Main extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		whatRenderNow();
-        batch.draw(buttonstex, 0,0);
 		batch.end();
 	}
 	public void whatRenderNow(){
