@@ -27,6 +27,7 @@ public class Main extends ApplicationAdapter {
 	private Texture texLogo;
 	private Texture texButtons;
     private Texture texStars;
+    private Texture texXenosLogo;
 
     private TextureRegion texstars1;
     private TextureRegion texstars2;
@@ -40,10 +41,12 @@ public class Main extends ApplicationAdapter {
     private Sprite starsSprite1clone;
     private Sprite starsSprite2clone;
     private Sprite starsSprite3clone;
+    private Sprite xenosLogo;
 
-	private float fade = 0f;
+	private float fadeLogo = 0f;
+    private float fadeMenu = 0f;
 
-	private boolean completelogo = true;
+	private boolean completelogo = true; //Ставить true для скипа лого
 	private boolean logoexit = false;
 	private Timer timer = new Timer(1000, e -> {
 		completelogo = true;
@@ -82,6 +85,11 @@ public class Main extends ApplicationAdapter {
         starsSprite2clone.set(starsSprite2);
         starsSprite3clone.set(starsSprite3);
 
+        texXenosLogo = new Texture(Gdx.files.internal("xenos.png"));
+        texXenosLogo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        xenosLogo = new Sprite(texXenosLogo);
+        xenosLogo.setSize(xenosLogo.getWidth()/1.3f,xenosLogo.getHeight()/1.3f);
+        xenosLogo.setPosition(0,490);
 
 		texButtons = new Texture(Gdx.files.internal("buttons/atlasbuttons.png"));
         buttonContine = new ButtonMenu(texButtons, 0, 174, 25);
@@ -89,6 +97,11 @@ public class Main extends ApplicationAdapter {
         buttonOption = new ButtonMenu(texButtons, 2, 85, 25);
         buttonExit = new ButtonMenu(texButtons, 3, 97, 25);
         buttonBack = new ButtonMenu(texButtons, 4, 90, 25);
+        buttonContine.setPosition(20, 420-20);
+        buttonNewGame.setPosition(20, 350-20);
+        buttonOption.setPosition(20, 280-20);
+        buttonExit.setPosition(20, 210-20);
+        buttonBack.setPosition(20, 140-20);
 
         controller = new InputController();
         Gdx.input.setInputProcessor(controller);
@@ -102,19 +115,47 @@ public class Main extends ApplicationAdapter {
 		whatRenderNow();
 		batch.end();
 	}
-	public void whatRenderNow(){
+	private void whatRenderNow(){
 		if (!logoexit) {
-			showlogo(completelogo);
+            if (!completelogo) {
+                if (fadeLogo < 1) {
+                    fadeLogo = fadeLogo + 0.01f;
+                }
+                if (fadeLogo >= 1) {
+                    fadeLogo = 1;
+                    timer.start();
+                }
+            } else {
+                if (fadeLogo <= 1) {
+                    fadeLogo = fadeLogo - 0.01f;
+                }
+                if (fadeLogo <= 0) {
+                    fadeLogo = 0;
+                    timer.stop();
+                    completelogo = false;
+                    logoexit = true;
+                }
+            }
+            logo.draw(batch, fadeLogo);
 		} else {
+            if (fadeMenu != 1){
+                fadeMenu = fadeIn(fadeMenu);
+            }
             starsSprite1.setPosition(starsSprite1.getX() - 0.1f, starsSprite1.getY());
             starsSprite2.setPosition(starsSprite2.getX() - 0.15f, starsSprite2.getY());
             starsSprite3.setPosition(starsSprite3.getX() - 0.2f, starsSprite3.getY());
             outOfScreenCheck(starsSprite1, starsSprite1clone, 0.1f);
             outOfScreenCheck(starsSprite2, starsSprite2clone, 0.15f);
             outOfScreenCheck(starsSprite3, starsSprite3clone, 0.2f);
-            starsSprite1.draw(batch);
-            starsSprite2.draw(batch);
-            starsSprite3.draw(batch);
+            starsSprite1.draw(batch, fadeMenu);
+            starsSprite2.draw(batch, fadeMenu);
+            starsSprite3.draw(batch, fadeMenu);
+            xenosLogo.draw(batch, fadeMenu);
+            buttonContine.needRender(batch, fadeMenu);
+            buttonNewGame.needRender(batch, fadeMenu);
+            buttonOption.needRender(batch, fadeMenu);
+            buttonExit.needRender(batch, fadeMenu);
+            buttonBack.needRender(batch, fadeMenu);
 		}
 	}
 
@@ -123,36 +164,23 @@ public class Main extends ApplicationAdapter {
     public void outOfScreenCheck (Sprite sprite, Sprite SpriteClone, float alias){
         if (-sprite.getX() + Gdx.graphics.getWidth() >= sprite.getScaleX() + sprite.getWidth() & !(-sprite.getX() >= sprite.getWidth())){
             SpriteClone.setPosition(sprite.getX() + 2048, 0);
-            SpriteClone.draw(batch);
+            SpriteClone.draw(batch, fadeMenu);
         } else if (-sprite.getX() >= sprite.getWidth()){
             sprite.setPosition(SpriteClone.getX() - alias, 0);
             System.out.println("ХОБА");
         }
     }
-	public void showlogo(boolean in){
-		if (!in & !logoexit) {
-			if (fade < 1) {
-				logo.draw(batch, fade);
-				fade = fade + 0.01f;
-			}
-			if (fade >= 1) {
-				fade = 1;
-				logo.draw(batch, fade);
-				timer.start();
-			}
-		} else if (!logoexit) {
-			if (fade <= 1) {
-				logo.draw(batch, fade);
-				fade = fade - 0.01f;
-			}
-			if (fade <= 0) {
-				fade = 0;
-				timer.stop();
-				completelogo = false;
-				logoexit = true;
-			}
-		}
-	}
+
+    public float fadeIn(float fade){
+        if (fade < 1) {
+            fade = fade + 0.01f;
+        }
+        if (fade >= 1) {
+            fade = 1;
+        }
+        return fade;
+    }
+
 	@Override
 	public void resize (int width, int height) {
 		System.out.println("Изменён размер! Теперь он " + width + " на " + height);
