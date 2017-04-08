@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
@@ -26,6 +27,7 @@ public class Menu implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Viewport viewport;
+    private Stage stage;
 
     private Animator runner;
     private Sprite starsSprite1;
@@ -36,7 +38,7 @@ public class Menu implements Screen {
     private Sprite starsSprite3clone;
     private Sprite xenosLogo;
 
-    private float fadeMenu = 0f;
+    public float fadeMenu = 0f;
 
     private Game game;
 
@@ -51,6 +53,7 @@ public class Menu implements Screen {
     public void show() {
         //runner = new Animator("animation_sheet.png");
         System.out.println(Gdx.graphics.getWidth() + " " + Gdx.graphics.getHeight());
+        stage = new Stage(viewport);
 
         Texture texStars = new Texture(Gdx.files.internal("background/atlasStars.png"));
         texStars.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -74,27 +77,31 @@ public class Menu implements Screen {
         texXenosLogo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         xenosLogo = new Sprite(texXenosLogo);
         xenosLogo.setSize(xenosLogo.getWidth()/1.3f,xenosLogo.getHeight()/1.3f);
-        xenosLogo.setPosition(0,490);
+        xenosLogo.setPosition(0,480-60);
         Texture texButtons = new Texture(Gdx.files.internal("buttons/atlasbuttons.png"));
-        buttonContine = new ButtonMenu(texButtons, 0, 174, 25);
-        buttonNewGame = new ButtonMenu(texButtons, 1, 152, 25);
-        buttonOption = new ButtonMenu(texButtons, 2, 85, 25);
-        buttonExit = new ButtonMenu(texButtons, 3, 97, 25);
-        buttonBack = new ButtonMenu(texButtons, 4, 90, 25);
-        buttonContine.setPosition(20, 420-20);
-        buttonNewGame.setPosition(20, 350-20);
-        buttonOption.setPosition(20, 280-20);
-        buttonExit.setPosition(20, 210-20);
-        buttonBack.setPosition(20, 140-20);
+        buttonContine = new ButtonMenu(texButtons, 0, 174, 25, 20, 420-50-60);
+        buttonNewGame = new ButtonMenu(texButtons, 1, 152, 25, 20, 350-50-60);
+        buttonOption = new ButtonMenu(texButtons, 2, 85, 25, 20, 280-50-60);
+        buttonExit = new ButtonMenu(texButtons, 3, 97, 25, 20, 210-50-60);
+        buttonBack = new ButtonMenu(texButtons, 4, 90, 25, 20, 140-50-60);
 
-        controller = new InputController();
-        Gdx.input.setInputProcessor(controller);
+        stage.addActor(buttonContine);
+        stage.addActor(buttonNewGame);
+        stage.addActor(buttonOption);
+        stage.addActor(buttonExit);
+        stage.addActor(buttonBack);
+
+        buttonBack.active = false;
+
+        //controller = new InputController();
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         if (fadeMenu != 1){
             fadeMenu = fadeIn(fadeMenu);
         }
@@ -103,6 +110,9 @@ public class Menu implements Screen {
         starsSprite3.setPosition(starsSprite3.getX() - 0.2f, starsSprite3.getY());
         camera.update();
         batch.setProjectionMatrix(camera.combined);
+
+        stage.act(delta);
+        stage.draw();
         batch.begin();
         outOfScreenCheck(starsSprite1, starsSprite1clone, 0.1f);
         outOfScreenCheck(starsSprite2, starsSprite2clone, 0.15f);
@@ -111,10 +121,6 @@ public class Menu implements Screen {
         starsSprite2.draw(batch, fadeMenu);
         starsSprite3.draw(batch, fadeMenu);
         xenosLogo.draw(batch, fadeMenu);
-        buttonContine.draw(batch, fadeMenu);
-        buttonNewGame.draw(batch, fadeMenu);
-        buttonOption.draw(batch, fadeMenu);
-        buttonExit.draw(batch, fadeMenu);
         batch.end();
     }
 
