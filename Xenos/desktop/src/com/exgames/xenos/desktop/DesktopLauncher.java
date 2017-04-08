@@ -7,11 +7,11 @@ import com.exgames.xenos.Main;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.resizable = false;
+		config.resizable = true;
 		config.vSyncEnabled = true;
-		config.fullscreen = false;
-		config.width = 1366;
-		config.height = 768;
+		config.fullscreen = true;
+		config.width = 1240;
+		config.height = 720;
 		new LwjglApplication(new Main(), config);
 	}
 }

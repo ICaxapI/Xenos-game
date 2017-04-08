@@ -10,18 +10,25 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.exgames.xenos.actors.ButtonMenu;
+import com.exgames.xenos.actors.ButtonOptionSwitch;
+import com.exgames.xenos.actors.Logo;
+
 
 /**
  * Created by Alex on 08.04.2017.
  */
 public class Menu implements Screen {
+    public boolean openOptions;
 
     private ButtonMenu buttonContine;
     private ButtonMenu buttonNewGame;
     private ButtonMenu buttonOption;
     private ButtonMenu buttonExit;
     private ButtonMenu buttonBack;
+    private Logo xenosLogo;
 
     private InputController controller;
     private OrthographicCamera camera;
@@ -36,7 +43,6 @@ public class Menu implements Screen {
     private Sprite starsSprite1clone;
     private Sprite starsSprite2clone;
     private Sprite starsSprite3clone;
-    private Sprite xenosLogo;
 
     public float fadeMenu = 0f;
 
@@ -74,53 +80,73 @@ public class Menu implements Screen {
         starsSprite3clone.set(starsSprite3);
 
         Texture texXenosLogo = new Texture(Gdx.files.internal("xenos.png"));
-        texXenosLogo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        xenosLogo = new Sprite(texXenosLogo);
-        xenosLogo.setSize(xenosLogo.getWidth()/1.3f,xenosLogo.getHeight()/1.3f);
-        xenosLogo.setPosition(0,480-60);
+        texXenosLogo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
+        xenosLogo = new Logo(texXenosLogo, 0, 480-60);
         Texture texButtons = new Texture(Gdx.files.internal("buttons/atlasbuttons.png"));
+        texButtons.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
         buttonContine = new ButtonMenu(texButtons, 0, 174, 25, 20, 420-50-60);
         buttonNewGame = new ButtonMenu(texButtons, 1, 152, 25, 20, 350-50-60);
-        buttonOption = new ButtonMenu(texButtons, 2, 85, 25, 20, 280-50-60);
+        buttonOption = new ButtonOptionSwitch(texButtons, 2, 85, 25, 20, 280-50-60);
         buttonExit = new ButtonMenu(texButtons, 3, 97, 25, 20, 210-50-60);
-        buttonBack = new ButtonMenu(texButtons, 4, 90, 25, 20, 140-50-60);
+        buttonBack = new ButtonOptionSwitch(texButtons, 4, 90, 25, 0-xenosLogo.getWidth(), 140-50-60);
 
+        stage.addActor(xenosLogo);
         stage.addActor(buttonContine);
         stage.addActor(buttonNewGame);
         stage.addActor(buttonOption);
         stage.addActor(buttonExit);
         stage.addActor(buttonBack);
 
-        buttonBack.active = false;
+        buttonContine.active = false;
+        buttonContine.updateSprite();
 
         //controller = new InputController();
         Gdx.input.setInputProcessor(stage);
     }
+    public void optionSwith(float time){
+        if (!openOptions) {
+            xenosLogo.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), xenosLogo.getY(), time));
+            buttonContine.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonContine.getY(), time));
+            buttonNewGame.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonNewGame.getY(), time));
+            buttonOption.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonOption.getY(), time));
+            buttonExit.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonExit.getY(), time));
+            buttonBack.addAction(Actions.moveTo(20, buttonBack.getY(), time));
+            openOptions = true;
+        } else {
+            xenosLogo.addAction(Actions.moveTo(0, xenosLogo.getY(), time));
+            buttonContine.addAction(Actions.moveTo(20, buttonContine.getY(), time));
+            buttonNewGame.addAction(Actions.moveTo(20, buttonNewGame.getY(), time));
+            buttonOption.addAction(Actions.moveTo(20, buttonOption.getY(), time));
+            buttonExit.addAction(Actions.moveTo(20, buttonExit.getY(), time));
+            buttonBack.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonBack.getY(), time));
+            openOptions = false;
+        }
+    }
 
     @Override
     public void render(float delta) {
+        float alias1 = (0.1f*delta*100);
+        float alias2 = (0.15f*delta*100);
+        float alias3 = (0.2f*delta*100);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         if (fadeMenu != 1){
             fadeMenu = fadeIn(fadeMenu);
         }
-        starsSprite1.setPosition(starsSprite1.getX() - 0.1f, starsSprite1.getY());
-        starsSprite2.setPosition(starsSprite2.getX() - 0.15f, starsSprite2.getY());
-        starsSprite3.setPosition(starsSprite3.getX() - 0.2f, starsSprite3.getY());
+        starsSprite1.setPosition(starsSprite1.getX() - alias1, starsSprite1.getY());
+        starsSprite2.setPosition(starsSprite2.getX() - alias2, starsSprite2.getY());
+        starsSprite3.setPosition(starsSprite3.getX() - alias3, starsSprite3.getY());
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-
         stage.act(delta);
         stage.draw();
         batch.begin();
-        outOfScreenCheck(starsSprite1, starsSprite1clone, 0.1f);
-        outOfScreenCheck(starsSprite2, starsSprite2clone, 0.15f);
-        outOfScreenCheck(starsSprite3, starsSprite3clone, 0.2f);
+        outOfScreenCheck(starsSprite1, starsSprite1clone, alias1);
+        outOfScreenCheck(starsSprite2, starsSprite2clone, alias2);
+        outOfScreenCheck(starsSprite3, starsSprite3clone, alias3);
         starsSprite1.draw(batch, fadeMenu);
         starsSprite2.draw(batch, fadeMenu);
         starsSprite3.draw(batch, fadeMenu);
-        xenosLogo.draw(batch, fadeMenu);
         batch.end();
     }
 
@@ -137,7 +163,7 @@ public class Menu implements Screen {
 
     private float fadeIn(float fade){
         if (fade < 1) {
-            fade = fade + 0.01f;
+            fade = fade + Gdx.graphics.getDeltaTime();
         }
         if (fade >= 1) {
             fade = 1;
