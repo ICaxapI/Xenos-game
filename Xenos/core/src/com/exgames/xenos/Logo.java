@@ -18,18 +18,18 @@ public class Logo implements Screen {
     private SpriteBatch batch;
     private Sprite logo;
     private float fadeLogo = 0f;
-    private boolean completelogo = false; //Ставить true для скипа лого
+    private boolean completelogo = false;
     private Timer timer = new Timer(1000, e -> {
         completelogo = true;
     });
 
-    public Logo(Game game){
+    public Logo(Game game, SpriteBatch batch){
         this.game = game;
+        this.batch = batch;
     }
 
     @Override
     public void show() {
-        batch = new SpriteBatch();
         Texture texLogo = new Texture(Gdx.files.internal("FinalNEW.png"));
         texLogo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         logo = new Sprite(texLogo);

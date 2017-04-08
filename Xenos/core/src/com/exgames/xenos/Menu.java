@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * Created by Alex on 08.04.2017.
@@ -24,6 +25,7 @@ public class Menu implements Screen {
     private InputController controller;
     private OrthographicCamera camera;
     private SpriteBatch batch;
+    private Viewport viewport;
 
     private Animator runner;
     private Sprite starsSprite1;
@@ -38,15 +40,16 @@ public class Menu implements Screen {
 
     private Game game;
 
-    public Menu(Game game){
+    Menu(Game game, SpriteBatch batch, OrthographicCamera camera, Viewport viewport){
         this.game = game;
+        this.batch = batch;
+        this.camera = camera;
+        this.viewport = viewport;
     }
 
     @Override
     public void show() {
-        batch = new SpriteBatch();
         //runner = new Animator("animation_sheet.png");
-        //camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         System.out.println(Gdx.graphics.getWidth() + " " + Gdx.graphics.getHeight());
 
         Texture texStars = new Texture(Gdx.files.internal("background/atlasStars.png"));
@@ -57,9 +60,9 @@ public class Menu implements Screen {
         starsSprite1 = new Sprite(texstars1);
         starsSprite2 = new Sprite(texstars2);
         starsSprite3 = new Sprite(texstars3);
-        starsSprite1.setSize(2048,2048);
-        starsSprite2.setSize(2048,2048);
-        starsSprite3.setSize(2048,2048);
+        starsSprite1.setSize(1536,1536);
+        starsSprite2.setSize(1536,1536);
+        starsSprite3.setSize(1536,1536);
         starsSprite1clone = new Sprite();
         starsSprite2clone = new Sprite();
         starsSprite3clone = new Sprite();
@@ -86,20 +89,21 @@ public class Menu implements Screen {
 
         controller = new InputController();
         Gdx.input.setInputProcessor(controller);
-
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
         if (fadeMenu != 1){
             fadeMenu = fadeIn(fadeMenu);
         }
         starsSprite1.setPosition(starsSprite1.getX() - 0.1f, starsSprite1.getY());
         starsSprite2.setPosition(starsSprite2.getX() - 0.15f, starsSprite2.getY());
         starsSprite3.setPosition(starsSprite3.getX() - 0.2f, starsSprite3.getY());
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
         outOfScreenCheck(starsSprite1, starsSprite1clone, 0.1f);
         outOfScreenCheck(starsSprite2, starsSprite2clone, 0.15f);
         outOfScreenCheck(starsSprite3, starsSprite3clone, 0.2f);
@@ -116,16 +120,16 @@ public class Menu implements Screen {
 
     /*Смотрит, вышел ли спрайт за пределы экрана. Если вышел - отрисовывает клон ровна справа до тех пор,
     пока тот не скроется. Если оригинал скрылся за пределы экрана - прекращаем отрисовывать клон и ставим оригинал на его место.*/
-    public void outOfScreenCheck (Sprite sprite, Sprite SpriteClone, float alias){
-        if (-sprite.getX() + Gdx.graphics.getWidth() >= sprite.getScaleX() + sprite.getWidth() & !(-sprite.getX() >= sprite.getWidth())){
-            SpriteClone.setPosition(sprite.getX() + 2048, 0);
+    private void outOfScreenCheck(Sprite sprite, Sprite SpriteClone, float alias){
+        if (-sprite.getX() + camera.viewportWidth >= sprite.getWidth() & !(-sprite.getX() >= sprite.getWidth())){
+            SpriteClone.setPosition(sprite.getX() + sprite.getWidth(), 0);
             SpriteClone.draw(batch, fadeMenu);
         } else if (-sprite.getX() >= sprite.getWidth()){
             sprite.setPosition(SpriteClone.getX() - alias, 0);
         }
     }
 
-    public float fadeIn(float fade){
+    private float fadeIn(float fade){
         if (fade < 1) {
             fade = fade + 0.01f;
         }
@@ -138,6 +142,7 @@ public class Menu implements Screen {
     @Override
     public void resize(int width, int height) {
         System.out.println("Изменён размер! Теперь он " + width + " на " + height);
+        viewport.update(width, height);
     }
 
     @Override
