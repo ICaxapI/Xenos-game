@@ -12,6 +12,7 @@ import com.exgames.xenos.Main;
 public class ButtonOptionSwitch extends ButtonMenu {
     public ButtonOptionSwitch(Texture atlas, int yNumb, int width, int height, float x, float y) {
         super(atlas, yNumb, width, height, x, y);
+        removeListener(listener);
         listener = new InputListener(){
             @Override
             public boolean mouseMoved(InputEvent event, float x, float y) {

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.exgames.xenos.actors.ButtonMenu;
+import com.exgames.xenos.actors.ButtonNewGame;
 import com.exgames.xenos.actors.ButtonOptionSwitch;
 import com.exgames.xenos.actors.Logo;
 
@@ -85,7 +86,7 @@ public class Menu implements Screen {
         Texture texButtons = new Texture(Gdx.files.internal("buttons/atlasbuttons.png"));
         texButtons.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
         buttonContine = new ButtonMenu(texButtons, 0, 174, 25, 20, 420-50-60);
-        buttonNewGame = new ButtonMenu(texButtons, 1, 152, 25, 20, 350-50-60);
+        buttonNewGame = new ButtonNewGame(texButtons, 1, 152, 25, 20, 350-50-60);
         buttonOption = new ButtonOptionSwitch(texButtons, 2, 85, 25, 20, 280-50-60);
         buttonExit = new ButtonMenu(texButtons, 3, 97, 25, 20, 210-50-60);
         buttonBack = new ButtonOptionSwitch(texButtons, 4, 90, 25, 0-xenosLogo.getWidth(), 140-50-60);
@@ -121,6 +122,11 @@ public class Menu implements Screen {
             buttonBack.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonBack.getY(), time));
             openOptions = false;
         }
+    }
+
+    public void newWorld(){
+        Screen physics = new newWorld(game, camera, batch, viewport);
+        game.setScreen(physics);
     }
 
     @Override

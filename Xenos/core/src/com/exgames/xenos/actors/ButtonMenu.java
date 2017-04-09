@@ -37,6 +37,42 @@ public class ButtonMenu extends Actor{
         mySprite.setPosition(x, y);
         listener = new InputListener(){
             @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("touchUp");
+                super.touchUp(event, x, y, pointer, button);
+            }
+
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                System.out.println("touchDragged");
+                super.touchDragged(event, x, y, pointer);
+            }
+
+            @Override
+            public boolean scrolled(InputEvent event, float x, float y, int amount) {
+                System.out.println("scrolled");
+                return super.scrolled(event, x, y, amount);
+            }
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                System.out.println("keyDown");
+                return super.keyDown(event, keycode);
+            }
+
+            @Override
+            public boolean keyUp(InputEvent event, int keycode) {
+                System.out.println("keyUp");
+                return super.keyUp(event, keycode);
+            }
+
+            @Override
+            public boolean keyTyped(InputEvent event, char character) {
+                System.out.println("KeyTyped");
+                return super.keyTyped(event, character);
+            }
+
+            @Override
             public boolean mouseMoved(InputEvent event, float x, float y) {
                 mousehere = true;
                 updateSprite();
