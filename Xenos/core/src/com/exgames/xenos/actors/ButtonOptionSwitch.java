@@ -23,7 +23,7 @@ public class ButtonOptionSwitch extends ButtonMenu {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Main.menu.optionSwith(0.35f);
+                Main.menu.optionSwith(0.5f);
                 clicked = true;
                 updateSprite();
                 return super.touchDown(event, x, y, pointer, button);
