@@ -7,10 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.exgames.xenos.Main;
 
 /**
- * Created by Alex on 09.04.2017.
+ * Created by 78122 on 10.04.2017.
  */
-public class ButtonOptionSwitch extends ButtonMenu {
-    public ButtonOptionSwitch(Texture atlas, int yNumb, int width, int height, float x, float y) {
+public class ButtonExit extends  ButtonMenu {
+    public ButtonExit(Texture atlas, int yNumb, int width, int height, float x, float y) {
         super(atlas, yNumb, width, height, x, y);
         removeListener(listener);
         listener = new InputListener(){
@@ -23,9 +23,10 @@ public class ButtonOptionSwitch extends ButtonMenu {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Main.menu.optionSwith(0.35f);
                 clicked = true;
                 updateSprite();
+                Main.menu.dispose();
+                System.exit(0);
                 return super.touchDown(event, x, y, pointer, button);
             }
 
