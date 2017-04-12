@@ -60,10 +60,11 @@ public class Menu implements Screen {
         //runner = new Animator("animation_sheet.png");
         System.out.println(Gdx.graphics.getWidth() + " " + Gdx.graphics.getHeight());
         stage = new Stage(viewport);
-        music = Gdx.audio.newMusic(Gdx.files.internal("music/new2.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("resources/music/loop.ogg"));
         music.setLooping(true);
+        music.setVolume(0.5f);
         music.play();
-        Texture texStars = new Texture(Gdx.files.internal("background/atlasStars.png"));
+        Texture texStars = new Texture(Gdx.files.internal("resources/background/atlasStars.png"));
         texStars.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         TextureRegion texstars1 = new TextureRegion(texStars, 0, 0, 1024, 1024);
         TextureRegion texstars2 = new TextureRegion(texStars, 1024, 0, 1024, 1024);
@@ -81,10 +82,10 @@ public class Menu implements Screen {
         starsSprite2clone.set(starsSprite2);
         starsSprite3clone.set(starsSprite3);
 
-        Texture texXenosLogo = new Texture(Gdx.files.internal("xenos.png"));
+        Texture texXenosLogo = new Texture(Gdx.files.internal("resources/xenos.png"));
         texXenosLogo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
         xenosLogo = new Logo(texXenosLogo, 0, 480-60);
-        Texture texButtons = new Texture(Gdx.files.internal("buttons/atlasbuttons.png"));
+        Texture texButtons = new Texture(Gdx.files.internal("resources/buttons/atlasbuttons.png"));
         texButtons.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
         buttonContine = new ButtonMenu(texButtons, 0, 174, 25, 20, 420-50-60);
         buttonNewGame = new ButtonNewGame(texButtons, 1, 152, 25, 20, 350-50-60);

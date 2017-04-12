@@ -1,17 +1,17 @@
 {
     "platform": "windows32",
     "jdk": "java-1.8.0-openjdk-1.8.0.121-2.b13.ojdkbuild.windows.x86.zip",
-    "executable": "myapp",
+    "executable": "Xenos",
     "classpath": [
-        "desktop-1.0.jar"
+        "desktop/build/libs/desktop-1.0.jar"
     ],
-    "mainclass": "ccom.exgames.xenos.desktop.DesktopLauncher",
+    "mainclass": "com.exgames.xenos.desktop.DesktopLauncher",
     "vmargs": [
        "Xmx1G"
     ],
     "resources": [
         "/Xenos game/Xenos/core/assets"
     ],
-    "minimizejre": "soft",
-    "output": "out-win"
+    "minimizejre": "hard",
+    "output": "binWindows"
 }

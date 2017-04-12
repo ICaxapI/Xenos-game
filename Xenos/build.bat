@@ -1,2 +1,2 @@
-gradlew clean build bundleNative
+gradlew desktop:dist
 pause
