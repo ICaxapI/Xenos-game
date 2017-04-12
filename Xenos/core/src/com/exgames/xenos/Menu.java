@@ -3,6 +3,7 @@ package com.exgames.xenos;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -33,6 +34,7 @@ public class Menu implements Screen {
     private SpriteBatch batch;
     private Viewport viewport;
     private Stage stage;
+    private Music music;
 
     private Animator runner;
     private Sprite starsSprite1;
@@ -58,7 +60,9 @@ public class Menu implements Screen {
         //runner = new Animator("animation_sheet.png");
         System.out.println(Gdx.graphics.getWidth() + " " + Gdx.graphics.getHeight());
         stage = new Stage(viewport);
-
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/new2.mp3"));
+        music.setLooping(true);
+        music.play();
         Texture texStars = new Texture(Gdx.files.internal("background/atlasStars.png"));
         texStars.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         TextureRegion texstars1 = new TextureRegion(texStars, 0, 0, 1024, 1024);
