@@ -64,9 +64,9 @@ public class newWorld implements Screen {
         fdef.restitution = 0.0f;
         fdef.friction = 2.0f;
         CircleShape shape = new CircleShape();
-        shape.setRadius(0.5f);
+        shape.setRadius(0.1f);
         fdef.shape = shape;
-        fdef.density = 10;
+        fdef.density = 100;
         rect.createFixture(fdef);
     }
     private void createWall(){

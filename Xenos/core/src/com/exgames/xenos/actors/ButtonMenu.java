@@ -44,7 +44,6 @@ public class ButtonMenu extends Actor{
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                System.out.println("touchDragged");
                 super.touchDragged(event, x, y, pointer);
             }
 

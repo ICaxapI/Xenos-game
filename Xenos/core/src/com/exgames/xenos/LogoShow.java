@@ -19,9 +19,7 @@ public class LogoShow implements Screen {
     private Sprite logo;
     private float fadeLogo = 0f;
     private boolean completelogo = false;
-    private Timer timer = new Timer(1000, e -> {
-        completelogo = true;
-    });
+    private Timer timer = new Timer(1000, e -> completelogo = true);
 
     public LogoShow(Game game, SpriteBatch batch){
         this.game = game;
