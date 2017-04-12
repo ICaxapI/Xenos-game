@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Main extends Game {
     float x = 0;
-    public static boolean skipLogo = true;
+    public static boolean skipLogo = false;
     public static Menu menu;
     public static LogoShow logo;
     public static SpriteBatch batch;

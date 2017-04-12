@@ -28,7 +28,7 @@ public class LogoShow implements Screen {
 
     @Override
     public void show() {
-        Texture texLogo = new Texture(Gdx.files.internal("FinalNEW.png"));
+        Texture texLogo = new Texture(Gdx.files.internal("resources/FinalNEW.png"));
         texLogo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         logo = new Sprite(texLogo);
         logo.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getWidth()/2);
