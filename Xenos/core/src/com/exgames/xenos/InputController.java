@@ -54,15 +54,12 @@ public class InputController implements InputProcessor {
         //System.out.println(gradRect);
         a = newWorld.centerx - screenX;
         b = newWorld.centery - screenY;
-        c = Math.sqrt((a*a)+(b*b));
-        grad = Math.toDegrees(Math.acos((b*b+c*c-a*a)/(2*b*c)));
+        c = Math.hypot(a,b);
+        grad = Math.toDegrees(Math.acos((Math.pow(b, 2.0)+Math.pow(c, 2.0)-Math.pow(a, 2.0))/(2*b*c)));
         if (a < 0){
-            grad = 180+(180-grad);
+            grad = 360-grad;
         }
         newWorld.mouseGrad = grad;
-//        System.out.println(grad);
-//        System.out.println(gradRect);
-//        System.out.println(Math.acos((b*b+c*c-a*a)/(2*b*c)));
         return false;
     }
 

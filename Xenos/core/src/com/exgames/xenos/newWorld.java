@@ -30,8 +30,9 @@ public class newWorld implements Screen {
     private InputController inputController;
     protected static float centerx;
     protected static float centery;
-    public static boolean left = false;
-    public static boolean right = true;
+
+    private float gradneed;
+    private double gradRect;
 
 
     public newWorld(Game game, SpriteBatch batch, Viewport viewport){
@@ -93,25 +94,38 @@ public class newWorld implements Screen {
         stage.draw();
         batch.begin();
         batch.end();
+
     }
 
     public void updateMouse(){
         double gradRect = Math.toDegrees(newWorld.rect.getAngle());
         if (gradRect >= 0) {
-            while (gradRect > 360) {
+            while (gradRect >= 360) {
                 gradRect -= 360;
             }
         } else {
-            while (gradRect < -360) {
+            while (gradRect <= -360) {
                 gradRect += 360;
             }
             gradRect += 360;
         }
-        float kek = (float) mouseGrad - (float) gradRect;
-        if        (kek > 0 & Math.abs(kek) < 180){
-            newWorld.rect.setAngularVelocity(kek/5);
-        } else if (kek < 0 & Math.abs(kek) < 180){
-            newWorld.rect.setAngularVelocity(kek/5);
+        gradneed = (float) mouseGrad - (float) gradRect;
+        if        (gradneed >= 0 & Math.abs(gradneed) < 180){
+            newWorld.rect.setAngularVelocity(gradneed/5);
+        } else if (gradneed <= 0 & Math.abs(gradneed) < 180){
+            newWorld.rect.setAngularVelocity(gradneed/5);
+        } else if (gradneed >= 0 & Math.abs(gradneed) >= 180){
+            if (gradneed < 0) {
+                newWorld.rect.setAngularVelocity((-360 - gradneed)/5);
+            } else {
+                newWorld.rect.setAngularVelocity((-360 + gradneed)/5);
+            }
+        } else if (gradneed <= 0 & Math.abs(gradneed) >= 180){
+            if (gradneed < 0) {
+                newWorld.rect.setAngularVelocity(( 360 + gradneed)/5);
+            } else {
+                newWorld.rect.setAngularVelocity(( 360 - gradneed)/5);
+            }
         }
     }
 
@@ -119,6 +133,7 @@ public class newWorld implements Screen {
     public void resize(int width, int height) {
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
+        viewport.update(width, height);
         System.out.println(centerx + " " + centery);
     }
 
