@@ -16,6 +16,7 @@ public class Main extends Game {
     public static SpriteBatch batch;
     public static OrthographicCamera camera;
     public static Viewport viewport;
+    public static float volume = 0.0f;
 
 	@Override
 	public void create () {
