@@ -5,7 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
@@ -17,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 public class newWorld implements Screen {
     public static double mouseGrad;
+    public static boolean updateGrad = true;
 
     private Game game;
     private OrthographicCamera camera;
@@ -30,6 +34,11 @@ public class newWorld implements Screen {
     private InputController inputController;
     protected static float centerx;
     protected static float centery;
+    BitmapFont font;
+    BitmapFont font2;
+    BitmapFont font3;
+//    BitmapFont font;
+    public static final String FONT_CHARACTERS = "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩщЪъЫыЬьЭэЮюЯяabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 
     private float gradneed;
     private double gradRect;
@@ -58,6 +67,25 @@ public class newWorld implements Screen {
         Gdx.input.setInputProcessor(inputController);
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/1.ttf"));
+        FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/2.ttf"));
+        FreeTypeFontGenerator generator3 = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/3.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 20;
+        parameter.characters = FONT_CHARACTERS;
+        parameter.magFilter = Texture.TextureFilter.Nearest;
+        parameter.minFilter = Texture.TextureFilter.Linear;
+        font = generator.generateFont(parameter);
+        font2 = generator2.generateFont(parameter);
+        font3 = generator3.generateFont(parameter);
+        generator.dispose();
+//        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/10468.ttf"));
+//        FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+//        fontParameter.borderColor = Color.RED;
+//        fontParameter.borderWidth = 500;
+//        fontParameter.color = Color.WHITE;
+//        font = generator.generateFont(fontParameter);
+//        font.setColor(1f, 1f, 1f, 1f);
     }
 
     private void createRect(){
@@ -79,7 +107,9 @@ public class newWorld implements Screen {
 
     @Override
     public void render(float delta) {
-        updateMouse();
+        if (updateGrad){
+            updateMouse();
+        }
         float fps = Gdx.graphics.getFramesPerSecond();
         if (fps < 1){
             fps = 60;
@@ -91,6 +121,14 @@ public class newWorld implements Screen {
         world.step(1/fps,5,5);
         batch.setProjectionMatrix(camera.combined);
         stage.act(delta);
+        stage.getBatch().begin();
+        font.draw(stage.getBatch(), "Лол кек чебурек :D" , 0, stage.getHeight()/2);
+        font2.draw(stage.getBatch(), "Лол кек чебурек :D" , 0, stage.getHeight()/2 - 20 - font.getXHeight());
+        font3.draw(stage.getBatch(), "Лол кек чебурек :D" , 0, stage.getHeight()/2 - 20*2 - font.getXHeight()*2);
+        font.draw(stage.getBatch(), "Lol kek 4eburek" , 0, stage.getHeight()/2 - 20*3 - font.getXHeight()*3);
+        font2.draw(stage.getBatch(), "Lol kek 4eburek" , 0, stage.getHeight()/2 - 20*4 - font.getXHeight()*4);
+        font3.draw(stage.getBatch(), "Lol kek 4eburek" , 0, stage.getHeight()/2 - 20*5 - font.getXHeight()*5);
+        stage.getBatch().end();
         stage.draw();
         batch.begin();
         batch.end();
@@ -126,6 +164,9 @@ public class newWorld implements Screen {
             } else {
                 newWorld.rect.setAngularVelocity(( 360 - gradneed)/5);
             }
+        }
+        if (Math.abs(gradneed) <= 0.005f){
+            updateGrad = false;
         }
     }
 

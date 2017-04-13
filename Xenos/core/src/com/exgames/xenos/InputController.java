@@ -51,7 +51,6 @@ public class InputController implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        //System.out.println(gradRect);
         a = newWorld.centerx - screenX;
         b = newWorld.centery - screenY;
         c = Math.hypot(a,b);
@@ -60,6 +59,7 @@ public class InputController implements InputProcessor {
             grad = 360-grad;
         }
         newWorld.mouseGrad = grad;
+        newWorld.updateGrad = true;
         return false;
     }
 
