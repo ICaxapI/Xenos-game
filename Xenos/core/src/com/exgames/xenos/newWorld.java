@@ -13,6 +13,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
@@ -35,8 +37,6 @@ public class newWorld implements Screen {
     protected static float centerx;
     protected static float centery;
     BitmapFont font;
-    BitmapFont font2;
-    BitmapFont font3;
 //    BitmapFont font;
     public static final String FONT_CHARACTERS = "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩщЪъЫыЬьЭэЮюЯяabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 
@@ -68,24 +68,13 @@ public class newWorld implements Screen {
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/1.ttf"));
-        FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/2.ttf"));
-        FreeTypeFontGenerator generator3 = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/3.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 20;
         parameter.characters = FONT_CHARACTERS;
         parameter.magFilter = Texture.TextureFilter.Nearest;
         parameter.minFilter = Texture.TextureFilter.Linear;
         font = generator.generateFont(parameter);
-        font2 = generator2.generateFont(parameter);
-        font3 = generator3.generateFont(parameter);
         generator.dispose();
-//        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/10468.ttf"));
-//        FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-//        fontParameter.borderColor = Color.RED;
-//        fontParameter.borderWidth = 500;
-//        fontParameter.color = Color.WHITE;
-//        font = generator.generateFont(fontParameter);
-//        font.setColor(1f, 1f, 1f, 1f);
     }
 
     private void createRect(){
@@ -123,11 +112,7 @@ public class newWorld implements Screen {
         stage.act(delta);
         stage.getBatch().begin();
         font.draw(stage.getBatch(), "Лол кек чебурек :D" , 0, stage.getHeight()/2);
-        font2.draw(stage.getBatch(), "Лол кек чебурек :D" , 0, stage.getHeight()/2 - 20 - font.getXHeight());
-        font3.draw(stage.getBatch(), "Лол кек чебурек :D" , 0, stage.getHeight()/2 - 20*2 - font.getXHeight()*2);
         font.draw(stage.getBatch(), "Lol kek 4eburek" , 0, stage.getHeight()/2 - 20*3 - font.getXHeight()*3);
-        font2.draw(stage.getBatch(), "Lol kek 4eburek" , 0, stage.getHeight()/2 - 20*4 - font.getXHeight()*4);
-        font3.draw(stage.getBatch(), "Lol kek 4eburek" , 0, stage.getHeight()/2 - 20*5 - font.getXHeight()*5);
         stage.getBatch().end();
         stage.draw();
         batch.begin();

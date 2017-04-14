@@ -25,13 +25,15 @@ public class Menu implements Screen {
     private Texture texXenosLogo;
     private Texture texStars;
     private Texture texButtons;
+    private Texture texButtonsFrame;
 
     private ButtonMenu buttonContine;
     private ButtonMenu buttonNewGame;
     private ButtonMenu buttonOption;
     private ButtonMenu buttonExit;
     private ButtonMenu buttonBack;
-    private Logo xenosLogo;
+    private MenuObj xenosLogo;
+    private MenuObj buttonsFrame;
 
     private InputController controller;
     private OrthographicCamera camera;
@@ -88,15 +90,19 @@ public class Menu implements Screen {
 
         texXenosLogo = new Texture(Gdx.files.internal("resources/xenos.png"));
         texXenosLogo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
-        xenosLogo = new Logo(texXenosLogo, 0, 480-60);
+        xenosLogo = new MenuObj(texXenosLogo, 25, 480-60, 0.7f);
+
         texButtons = new Texture(Gdx.files.internal("resources/buttons/atlasbuttons.png"));
         texButtons.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
-        buttonContine = new ButtonMenu(texButtons, 0, 174, 25, 20, 420-50-60);
-        buttonNewGame = new ButtonNewGame(texButtons, 1, 152, 25, 20, 350-50-60);
-        buttonOption = new ButtonOptionSwitch(texButtons, 2, 85, 25, 20, 280-50-60);
-        buttonExit = new ButtonExit(texButtons, 3, 97, 25, 20, 210-50-60);
+        buttonContine = new ButtonMenu(texButtons, 0, 174, 25, 45, 420-50-60);
+        buttonNewGame = new ButtonNewGame(texButtons, 1, 152, 25, 45, 350-50-60);
+        buttonOption = new ButtonOptionSwitch(texButtons, 2, 85, 25, 45, 280-50-60);
+        buttonExit = new ButtonExit(texButtons, 3, 97, 25, 45, 210-50-60);
         buttonBack = new ButtonOptionSwitch(texButtons, 4, 90, 25, 0-xenosLogo.getWidth(), 140-50-60);
+        texButtonsFrame = new Texture(Gdx.files.internal("resources/buttons/frame.png"));
+        buttonsFrame = new MenuObj(texButtonsFrame, -35,75, 1.5f);
 
+        stage.addActor(buttonsFrame);
         stage.addActor(xenosLogo);
         stage.addActor(buttonContine);
         stage.addActor(buttonNewGame);
@@ -112,20 +118,22 @@ public class Menu implements Screen {
     }
     public void optionSwith(float time){
         if (!openOptions) {
-            xenosLogo.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), xenosLogo.getY(), time));
-            buttonContine.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonContine.getY(), time));
-            buttonNewGame.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonNewGame.getY(), time));
-            buttonOption.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonOption.getY(), time));
-            buttonExit.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonExit.getY(), time));
+            xenosLogo.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), xenosLogo.getY(), time));
+            buttonContine.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonContine.getY(), time));
+            buttonNewGame.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonNewGame.getY(), time));
+            buttonOption.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonOption.getY(), time));
+            buttonExit.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonExit.getY(), time));
+            buttonsFrame.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonsFrame.getY(), time));
             buttonBack.addAction(Actions.moveTo(20, buttonBack.getY(), time));
             openOptions = true;
         } else {
             xenosLogo.addAction(Actions.moveTo(0, xenosLogo.getY(), time));
-            buttonContine.addAction(Actions.moveTo(20, buttonContine.getY(), time));
-            buttonNewGame.addAction(Actions.moveTo(20, buttonNewGame.getY(), time));
-            buttonOption.addAction(Actions.moveTo(20, buttonOption.getY(), time));
-            buttonExit.addAction(Actions.moveTo(20, buttonExit.getY(), time));
-            buttonBack.addAction(Actions.moveTo(0 - xenosLogo.getWidth(), buttonBack.getY(), time));
+            buttonContine.addAction(Actions.moveTo(45, buttonContine.getY(), time));
+            buttonNewGame.addAction(Actions.moveTo(45, buttonNewGame.getY(), time));
+            buttonOption.addAction(Actions.moveTo(45, buttonOption.getY(), time));
+            buttonExit.addAction(Actions.moveTo(45, buttonExit.getY(), time));
+            buttonBack.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonBack.getY(), time));
+            buttonsFrame.addAction(Actions.moveTo(-35, buttonsFrame.getY(), time));
             openOptions = false;
         }
     }

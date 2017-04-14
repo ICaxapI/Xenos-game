@@ -9,15 +9,15 @@ import com.exgames.xenos.Main;
 /**
  * Created by Alex on 08.04.2017.
  */
-public class Logo extends Actor {
+public class MenuObj extends Actor {
     private Sprite sprite;
     private Texture texture;
 
-    public Logo(Texture texture, float x, float y){
+    public MenuObj(Texture texture, float x, float y, float scale){
 
         sprite = new Sprite(texture);
         sprite.setBounds(x, y, texture.getWidth(), texture.getHeight());
-        setSize(texture.getWidth()/1.3f, texture.getHeight()/1.3f);
+        setSize(texture.getWidth()*scale, texture.getHeight()*scale);
         setBounds(x, y, getWidth(), getHeight());
         setPosition(x, y);
     }
