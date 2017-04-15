@@ -12,7 +12,7 @@ public class Animator {
     private static final int FRAME_COLS = 6; // 6
     private static final int FRAME_ROWS = 5; // 5
 
-    private Animation walkAnimation; // #3
+    private Animation<TextureRegion> walkAnimation; // #3
     private Texture walkSheet; // #4
     private TextureRegion[] walkFrames; // #5
     private TextureRegion currentFrame; // #7
@@ -28,7 +28,7 @@ public class Animator {
                 walkFrames[index++] = tmp[i][j];
             }
         }
-        walkAnimation = new Animation(0.025f, walkFrames); // #11
+        walkAnimation = new Animation<>(0.025f, walkFrames); // #11
         stateTime = 0f; // #13
     }
 
