@@ -139,7 +139,7 @@ public class Menu implements Screen {
     }
 
     public void newWorld(){
-        Screen physics = new newWorld(game, batch, viewport);
+        Screen physics = new NewWorld(game, batch, viewport);
         game.setScreen(physics);
     }
 
@@ -158,8 +158,6 @@ public class Menu implements Screen {
         starsSprite3.setPosition(starsSprite3.getX() - alias3, starsSprite3.getY());
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        stage.act(delta);
-        stage.draw();
         batch.begin();
         outOfScreenCheck(starsSprite1, starsSprite1clone, alias1);
         outOfScreenCheck(starsSprite2, starsSprite2clone, alias2);
@@ -168,6 +166,8 @@ public class Menu implements Screen {
         starsSprite2.draw(batch, fadeMenu);
         starsSprite3.draw(batch, fadeMenu);
         batch.end();
+        stage.act(delta);
+        stage.draw();
     }
 
     /*Смотрит, вышел ли спрайт за пределы экрана. Если вышел - отрисовывает клон ровна справа до тех пор,

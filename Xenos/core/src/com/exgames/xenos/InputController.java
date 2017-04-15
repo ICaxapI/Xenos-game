@@ -15,10 +15,10 @@ public class InputController implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.A){
-            newWorld.rect.setAngularVelocity(1);
+            NewWorld.rect.setAngularVelocity(1);
         }
         if (keycode == Input.Keys.D){
-            newWorld.rect.setAngularVelocity(-1);
+            NewWorld.rect.setAngularVelocity(-1);
         }
         return false;
     }
@@ -51,15 +51,15 @@ public class InputController implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        a = newWorld.centerx - screenX;
-        b = newWorld.centery - screenY;
+        a = NewWorld.centerx - screenX;
+        b = NewWorld.centery - screenY;
         c = Math.hypot(a,b);
         grad = Math.toDegrees(Math.acos((Math.pow(b, 2.0)+Math.pow(c, 2.0)-Math.pow(a, 2.0))/(2*b*c)));
         if (a < 0){
             grad = 360-grad;
         }
-        newWorld.mouseGrad = grad;
-        newWorld.updateGrad = true;
+        NewWorld.mouseGrad = grad;
+        NewWorld.updateGrad = true;
         return false;
     }
 

@@ -3,6 +3,7 @@ package com.exgames.xenos;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,14 +14,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.PerformanceCounter;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.json.simple.*;
+
+import java.io.File;
+
 
 /**
  * Created by Alex on 09.04.2017.
  */
-public class newWorld implements Screen {
+public class NewWorld implements Screen {
     public static double mouseGrad;
     public static boolean updateGrad = true;
 
@@ -44,7 +48,7 @@ public class newWorld implements Screen {
     private double gradRect;
 
 
-    public newWorld(Game game, SpriteBatch batch, Viewport viewport){
+    public NewWorld(Game game, SpriteBatch batch, Viewport viewport){
         this.game = game;
         this.camera = new OrthographicCamera(16,9);;
         camera.position.set(new Vector3(camera.viewportWidth/2f,camera.viewportHeight/2f,0));
@@ -75,8 +79,17 @@ public class newWorld implements Screen {
         parameter.minFilter = Texture.TextureFilter.Linear;
         font = generator.generateFont(parameter);
         generator.dispose();
+        PerformanceCounter kek = new PerformanceCounter("kek");
+        PerformanceCounter kek2 = new PerformanceCounter("kek2");
+        kek.start();
+        String jsonInput = Gdx.files.internal("resources/writing/test.json").readString();
+        kek.stop();
+        kek2.start();
+        JsonUtils.parseCurrentInfoJson(jsonInput);
+        kek2.stop();
+        System.out.println("Время парсинга Json: " + kek2.current);
+        System.out.println("Время загрузки Json: " + kek.current);
     }
-
     private void createRect(){
         BodyDef body = new BodyDef();
         body.type = BodyDef.BodyType.DynamicBody;
@@ -88,7 +101,7 @@ public class newWorld implements Screen {
         fdef.restitution = 0.0f;
         fdef.friction = 2.0f;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(0.2f,1.5f);
+        shape.setAsBox(0.01f,5.0f);
         fdef.shape = shape;
         fdef.density = 100;
         rect.createFixture(fdef);
@@ -112,7 +125,7 @@ public class newWorld implements Screen {
         stage.act(delta);
         stage.getBatch().begin();
         font.draw(stage.getBatch(), "Лол кек чебурек :D" , 0, stage.getHeight()/2);
-        font.draw(stage.getBatch(), "Lol kek 4eburek" , 0, stage.getHeight()/2 - 20*3 - font.getXHeight()*3);
+        font.draw(stage.getBatch(), "Lol kek 4eburek" , 0, stage.getHeight()/2 - 20*1 - font.getXHeight()*1);
         stage.getBatch().end();
         stage.draw();
         batch.begin();
@@ -121,7 +134,7 @@ public class newWorld implements Screen {
     }
 
     public void updateMouse(){
-        double gradRect = Math.toDegrees(newWorld.rect.getAngle());
+        double gradRect = Math.toDegrees(NewWorld.rect.getAngle());
         if (gradRect >= 0) {
             while (gradRect >= 360) {
                 gradRect -= 360;
@@ -134,20 +147,20 @@ public class newWorld implements Screen {
         }
         gradneed = (float) mouseGrad - (float) gradRect;
         if        (gradneed >= 0 & Math.abs(gradneed) < 180){
-            newWorld.rect.setAngularVelocity(gradneed/5);
+            NewWorld.rect.setAngularVelocity(gradneed/5);
         } else if (gradneed <= 0 & Math.abs(gradneed) < 180){
-            newWorld.rect.setAngularVelocity(gradneed/5);
+            NewWorld.rect.setAngularVelocity(gradneed/5);
         } else if (gradneed >= 0 & Math.abs(gradneed) >= 180){
             if (gradneed < 0) {
-                newWorld.rect.setAngularVelocity((-360 - gradneed)/5);
+                NewWorld.rect.setAngularVelocity((-360 - gradneed)/5);
             } else {
-                newWorld.rect.setAngularVelocity((-360 + gradneed)/5);
+                NewWorld.rect.setAngularVelocity((-360 + gradneed)/5);
             }
         } else if (gradneed <= 0 & Math.abs(gradneed) >= 180){
             if (gradneed < 0) {
-                newWorld.rect.setAngularVelocity(( 360 + gradneed)/5);
+                NewWorld.rect.setAngularVelocity(( 360 + gradneed)/5);
             } else {
-                newWorld.rect.setAngularVelocity(( 360 - gradneed)/5);
+                NewWorld.rect.setAngularVelocity(( 360 - gradneed)/5);
             }
         }
         if (Math.abs(gradneed) <= 0.005f){

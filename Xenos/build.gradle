@@ -3,6 +3,7 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple/" }
         jcenter()
     }
     dependencies {
@@ -28,6 +29,7 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple/" }
     }
 }
 
@@ -42,6 +44,7 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+        compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     }
 }
 
@@ -56,6 +59,7 @@ project(":core") {
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     }
 }
 
