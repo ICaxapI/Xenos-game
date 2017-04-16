@@ -1,6 +1,5 @@
 package com.exgames.xenos.actors;
 
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,8 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.PerformanceCounter;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -95,16 +92,16 @@ public class Cloud extends Actor{
 
     public void updateCloud(){
         ltSprite.setSize(texltRegion.getRegionWidth()*scale,texltRegion.getRegionHeight()*scale);
-        ltSprite.setPosition(x - ltSprite.getWidth(), y + myLabel.getPrefHeight());
+        ltSprite.setPosition(x - ltSprite.getWidth(), y + myLabel.getHeight());
         mtSprite.setSize(myLabel.getPrefWidth(),texmtRegion.getRegionHeight()*scale);
-        mtSprite.setPosition(x , y + myLabel.getPrefHeight());
+        mtSprite.setPosition(x , y + myLabel.getHeight());
         rtSprite.setSize(texrtRegion.getRegionWidth()*scale,texrtRegion.getRegionHeight()*scale);
-        rtSprite.setPosition(x + myLabel.getPrefWidth(), y + myLabel.getPrefHeight());
-        mlSprite.setSize(texmlRegion.getRegionWidth()*scale, myLabel.getPrefHeight());
+        rtSprite.setPosition(x + myLabel.getPrefWidth(), y + myLabel.getHeight());
+        mlSprite.setSize(texmlRegion.getRegionWidth()*scale, myLabel.getHeight());
         mlSprite.setPosition(x - mlSprite.getWidth(), y);
-        cSprite.setSize(myLabel.getPrefWidth(), myLabel.getPrefHeight());
+        cSprite.setSize(myLabel.getPrefWidth(), myLabel.getHeight());
         cSprite.setPosition(x , y);
-        mrSprite.setSize(texmlRegion.getRegionWidth()*scale, myLabel.getPrefHeight());
+        mrSprite.setSize(texmlRegion.getRegionWidth()*scale, myLabel.getHeight());
         mrSprite.setPosition(x + myLabel.getPrefWidth(), y);
         lbSprite.setSize(texlbRegion.getRegionWidth()*scale,texlbRegion.getRegionHeight()*scale);
         lbSprite.setPosition(x - lbSprite.getWidth(), y - lbSprite.getHeight());
@@ -151,13 +148,13 @@ class MyTimerTask implements Runnable {
     public void run() {
         exemp.peek.stop();
         exemp.myLabel.setText("");
-        if (exemp.myLabel.getText().toString() != exemp.needString){
-            for (int i = 0; i <= counter; i++){
-                exemp.myLabel.setText(exemp.myLabel.getText().toString()+exemp.needString.charAt(i));
+        if (exemp.myLabel.getText().toString() != exemp.needString) {
+            for (int i = 0; i <= counter; i++) {
+                exemp.myLabel.setText(exemp.myLabel.getText().toString() + exemp.needString.charAt(i));
                 lastSymbol = exemp.needString.charAt(i);
             }
             counter++;
-            if (lastSymbol != ' ' & lastSymbol != '\n'){
+            if (lastSymbol != ' ' & lastSymbol != '\n') {
                 exemp.peek.play();
             }
         }

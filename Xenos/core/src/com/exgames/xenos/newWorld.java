@@ -3,7 +3,6 @@ package com.exgames.xenos;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,10 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.PerformanceCounter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.exgames.xenos.actors.Cloud;
-import org.json.simple.*;
-
-import java.io.File;
-import java.util.TimerTask;
 
 
 /**
@@ -46,7 +41,7 @@ public class NewWorld implements Screen {
     protected static float centery;
     BitmapFont font;
 //    BitmapFont font;
-    public static final String FONT_CHARACTERS = "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩщЪъЫыЬьЭэЮюЯяabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
+    public static final String FONT_CHARACTERS = "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩщЪъЫыЬХхьЭэЮюЯяabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 
     private float gradneed;
     private double gradRect;
@@ -76,7 +71,7 @@ public class NewWorld implements Screen {
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/1.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/4.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 20;
         parameter.characters = FONT_CHARACTERS;
@@ -96,8 +91,7 @@ public class NewWorld implements Screen {
         System.out.println("Время загрузки Json: " + kek.current);
 
         cloud = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
-        String string = "лол кек чебурек\nХммммм....";
-        Cloud cloudActor = new Cloud(cloud,300,400, string, font, stage, 4);
+        Cloud cloudActor = new Cloud(cloud,300,50 , string, font, stage, 4);
 
     }
     private void createRect(){
