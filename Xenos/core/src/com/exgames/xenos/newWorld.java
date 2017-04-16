@@ -20,6 +20,7 @@ import com.exgames.xenos.actors.Cloud;
 import org.json.simple.*;
 
 import java.io.File;
+import java.util.TimerTask;
 
 
 /**
@@ -95,7 +96,7 @@ public class NewWorld implements Screen {
         System.out.println("Время загрузки Json: " + kek.current);
 
         cloud = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
-        String string = "лол кек чебурекКкКккккккккккККККккКК\nХммм, а если ТАК!??\n:)";
+        String string = "лол кек чебурек\nХммммм....";
         Cloud cloudActor = new Cloud(cloud,300,400, string, font, stage, 4);
 
     }

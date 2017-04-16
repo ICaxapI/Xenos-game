@@ -1,5 +1,8 @@
 package com.exgames.xenos.actors;
 
+import com.badlogic.gdx.Audio;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -8,11 +11,20 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.PerformanceCounter;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Olejon on 16.04.2017.
  */
 public class Cloud extends Actor{
+    public PerformanceCounter timermer;
+    public Sound peek;
     private static boolean initialized = false;
     private static TextureRegion texltRegion;
     private static TextureRegion texlbRegion;
@@ -33,7 +45,8 @@ public class Cloud extends Actor{
     private Sprite mlSprite;
     private Sprite mrSprite;
     private Sprite mbSprite;
-    private Label myLabel;
+    public Label myLabel;
+    public String needString;
     private float x;
     private float y;
     private float scale;
@@ -52,12 +65,14 @@ public class Cloud extends Actor{
             texmrRegion = new TextureRegion(atlas, 8, 3, 3, 5);
             texmbRegion = new TextureRegion(atlas, 3, 8, 5, 3);
             textail = new TextureRegion(atlas, 11, 10, 5, 6);
+            peek = Gdx.audio.newSound(Gdx.files.internal("resources/music/peek.wav"));
             initialized = true;
         }
         labelStyle = new Label.LabelStyle();//Не забыть dispose!
         labelStyle.font = font;
         myLabel = new Label(string, labelStyle);
-        myLabel.setText(string);
+        myLabel.setText("");
+        this.needString = string;
         myLabel.setPosition(x, y);
         ltSprite = new Sprite(texltRegion); //левый верхний
         mtSprite = new Sprite(texmtRegion); //верхний центр
@@ -74,15 +89,17 @@ public class Cloud extends Actor{
         updateCloud();
         setPosition(x, y);
         stage.addActor(this);
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(new MyTimerTask(this), 0, 75, TimeUnit.MILLISECONDS);
     }
 
     public void updateCloud(){
         ltSprite.setSize(texltRegion.getRegionWidth()*scale,texltRegion.getRegionHeight()*scale);
         ltSprite.setPosition(x - ltSprite.getWidth(), y + myLabel.getPrefHeight());
         mtSprite.setSize(myLabel.getPrefWidth(),texmtRegion.getRegionHeight()*scale);
-        mtSprite.setPosition(x, y + myLabel.getPrefHeight());
+        mtSprite.setPosition(x , y + myLabel.getPrefHeight());
         rtSprite.setSize(texrtRegion.getRegionWidth()*scale,texrtRegion.getRegionHeight()*scale);
-        rtSprite.setPosition(x+myLabel.getPrefWidth(), y + myLabel.getPrefHeight());
+        rtSprite.setPosition(x + myLabel.getPrefWidth(), y + myLabel.getPrefHeight());
         mlSprite.setSize(texmlRegion.getRegionWidth()*scale, myLabel.getPrefHeight());
         mlSprite.setPosition(x - mlSprite.getWidth(), y);
         cSprite.setSize(myLabel.getPrefWidth(), myLabel.getPrefHeight());
@@ -94,7 +111,8 @@ public class Cloud extends Actor{
         mbSprite.setSize(myLabel.getPrefWidth(),texmbRegion.getRegionHeight()*scale);
         mbSprite.setPosition(x, y - mbSprite.getHeight());
         rbSprite.setSize(texrbRegion.getRegionWidth()*scale,texrbRegion.getRegionHeight()*scale);
-        rbSprite.setPosition(x+myLabel.getPrefWidth(), y - rbSprite.getHeight());
+        rbSprite.setPosition(x + myLabel.getPrefWidth(), y - rbSprite.getHeight());
+
     }
 
     @Override
@@ -123,3 +141,27 @@ public class Cloud extends Actor{
         super.act(delta);
     }
 }
+class MyTimerTask implements Runnable {
+    Cloud exemp;
+    char lastSymbol;
+    int counter;
+    MyTimerTask(Cloud exemp){
+        this.exemp = exemp;
+    }
+    public void run() {
+        exemp.peek.stop();
+        exemp.myLabel.setText("");
+        if (exemp.myLabel.getText().toString() != exemp.needString){
+            for (int i = 0; i <= counter; i++){
+                exemp.myLabel.setText(exemp.myLabel.getText().toString()+exemp.needString.charAt(i));
+                lastSymbol = exemp.needString.charAt(i);
+            }
+            counter++;
+            if (lastSymbol != ' ' & lastSymbol != '\n'){
+                exemp.peek.play();
+            }
+        }
+    }
+}
+
+
