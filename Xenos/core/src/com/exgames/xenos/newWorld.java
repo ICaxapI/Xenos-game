@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.PerformanceCounter;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.exgames.xenos.actors.Cloud;
 import org.json.simple.*;
 
 import java.io.File;
@@ -27,6 +28,8 @@ import java.io.File;
 public class NewWorld implements Screen {
     public static double mouseGrad;
     public static boolean updateGrad = true;
+
+    private Texture cloud;
 
     private Game game;
     private OrthographicCamera camera;
@@ -71,14 +74,15 @@ public class NewWorld implements Screen {
         Gdx.input.setInputProcessor(inputController);
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
+
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/1.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 20;
         parameter.characters = FONT_CHARACTERS;
-        parameter.magFilter = Texture.TextureFilter.Nearest;
-        parameter.minFilter = Texture.TextureFilter.Linear;
         font = generator.generateFont(parameter);
+        font.getData().scale(0.2f);
         generator.dispose();
+
         PerformanceCounter kek = new PerformanceCounter("kek");
         PerformanceCounter kek2 = new PerformanceCounter("kek2");
         kek.start();
@@ -89,6 +93,11 @@ public class NewWorld implements Screen {
         kek2.stop();
         System.out.println("Время парсинга Json: " + kek2.current);
         System.out.println("Время загрузки Json: " + kek.current);
+
+        cloud = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
+        String string = "лол кек чебурекКкКккккккккккККККккКК\nХммм, а если ТАК!??\n:)";
+        Cloud cloudActor = new Cloud(cloud,300,400, string, font, stage, 4);
+
     }
     private void createRect(){
         BodyDef body = new BodyDef();
@@ -101,7 +110,7 @@ public class NewWorld implements Screen {
         fdef.restitution = 0.0f;
         fdef.friction = 2.0f;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(0.01f,5.0f);
+        shape.setAsBox(1f,1f);
         fdef.shape = shape;
         fdef.density = 100;
         rect.createFixture(fdef);
@@ -116,17 +125,13 @@ public class NewWorld implements Screen {
         if (fps < 1){
             fps = 60;
         }
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
         renderer.render(world,camera.combined);
         world.step(1/fps,5,5);
         batch.setProjectionMatrix(camera.combined);
         stage.act(delta);
-        stage.getBatch().begin();
-        font.draw(stage.getBatch(), "Лол кек чебурек :D" , 0, stage.getHeight()/2);
-        font.draw(stage.getBatch(), "Lol kek 4eburek" , 0, stage.getHeight()/2 - 20*1 - font.getXHeight()*1);
-        stage.getBatch().end();
         stage.draw();
         batch.begin();
         batch.end();
@@ -173,7 +178,6 @@ public class NewWorld implements Screen {
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
         viewport.update(width, height);
-        System.out.println(centerx + " " + centery);
     }
 
     @Override

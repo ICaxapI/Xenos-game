@@ -64,7 +64,6 @@ public class Menu implements Screen {
     @Override
     public void show() {
         //runner = new Animator("animation_sheet.png");
-        System.out.println(Gdx.graphics.getWidth() + " " + Gdx.graphics.getHeight());
         stage = new Stage(viewport);
         music = Gdx.audio.newMusic(Gdx.files.internal("resources/music/loop.ogg"));
         music.setLooping(true);
@@ -118,16 +117,16 @@ public class Menu implements Screen {
     }
     public void optionSwith(float time){
         if (!openOptions) {
-            xenosLogo.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), xenosLogo.getY(), time));
-            buttonContine.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonContine.getY(), time));
-            buttonNewGame.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonNewGame.getY(), time));
-            buttonOption.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonOption.getY(), time));
-            buttonExit.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonExit.getY(), time));
-            buttonsFrame.addAction(Actions.moveTo(0 - buttonsFrame.getWidth(), buttonsFrame.getY(), time));
+            xenosLogo.addAction(Actions.moveTo(25 - buttonsFrame.getWidth(), xenosLogo.getY(), time));
+            buttonContine.addAction(Actions.moveTo(45 - buttonsFrame.getWidth(), buttonContine.getY(), time));
+            buttonNewGame.addAction(Actions.moveTo(45 - buttonsFrame.getWidth(), buttonNewGame.getY(), time));
+            buttonOption.addAction(Actions.moveTo(45 - buttonsFrame.getWidth(), buttonOption.getY(), time));
+            buttonExit.addAction(Actions.moveTo(45 - buttonsFrame.getWidth(), buttonExit.getY(), time));
+            buttonsFrame.addAction(Actions.moveTo(-35 - buttonsFrame.getWidth(), buttonsFrame.getY(), time));
             buttonBack.addAction(Actions.moveTo(20, buttonBack.getY(), time));
             openOptions = true;
         } else {
-            xenosLogo.addAction(Actions.moveTo(0, xenosLogo.getY(), time));
+            xenosLogo.addAction(Actions.moveTo(25, xenosLogo.getY(), time));
             buttonContine.addAction(Actions.moveTo(45, buttonContine.getY(), time));
             buttonNewGame.addAction(Actions.moveTo(45, buttonNewGame.getY(), time));
             buttonOption.addAction(Actions.moveTo(45, buttonOption.getY(), time));
@@ -193,28 +192,23 @@ public class Menu implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        System.out.println("Изменён размер! Теперь он " + width + " на " + height);
         viewport.update(width, height);
     }
 
     @Override
     public void pause() {
-        System.out.println("pause");
     }
 
     @Override
     public void resume() {
-        System.out.println("resume");
     }
 
     @Override
     public void hide() {
-        System.out.println("hide");
     }
 
     @Override
     public void dispose() {
-        System.out.println("dispose");
         batch.dispose();
         music.dispose();
         game.dispose();
