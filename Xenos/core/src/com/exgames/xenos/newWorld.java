@@ -35,11 +35,13 @@ public class NewWorld implements Screen {
     private boolean press = false;
     private World world;
     private Box2DDebugRenderer renderer;
-    protected static Body rect;
+    static Body rect;
     private InputController inputController;
-    protected static float centerx;
-    protected static float centery;
-    BitmapFont font;
+    static float centerx;
+    static float centery;
+    private BitmapFont font;
+    private BitmapFont font2;
+    private BitmapFont font3;
 //    BitmapFont font;
     public static final String FONT_CHARACTERS = "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩщЪъЫыЬХхьЭэЮюЯяabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 
@@ -73,10 +75,22 @@ public class NewWorld implements Screen {
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/4.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 20;
+        parameter.size = 25;
+        parameter.minFilter = Texture.TextureFilter.Nearest;
+        parameter.magFilter = Texture.TextureFilter.Linear;
         parameter.characters = FONT_CHARACTERS;
+        parameter.renderCount = 2;
         font = generator.generateFont(parameter);
-        font.getData().scale(0.2f);
+        font.getData().scale(0.005f);
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/5.ttf"));
+        parameter.size = 50;
+        parameter.minFilter = Texture.TextureFilter.Nearest;
+        parameter.magFilter = Texture.TextureFilter.Linear;
+        font2 = generator.generateFont(parameter);
+        font2.getData().scale(0.005f);
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/6.ttf"));
+        font3 = generator.generateFont(parameter);
+        font3.getData().scale(0.005f);
         generator.dispose();
 
         PerformanceCounter kek = new PerformanceCounter("kek");
@@ -89,9 +103,12 @@ public class NewWorld implements Screen {
         kek2.stop();
         System.out.println("Время парсинга Json: " + kek2.current);
         System.out.println("Время загрузки Json: " + kek.current);
-
         cloud = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
-        Cloud cloudActor = new Cloud(cloud,300,50 , string, font, stage, 4);
+        String string = "Можно грабить корованы. А можно и не.";
+        Cloud cloudActor = new Cloud(cloud,20,40 , string, font, stage, 5,60, "resources/music/peek.wav");
+        Cloud cloudActor2 = new Cloud(cloud,20,450 , string, font2, stage, 5,20, "resources/music/peek.wav");
+        Cloud cloudActor3 = new Cloud(cloud,20,200 , string, font3, stage, 5,40, "resources/music/peek.wav");
+
 
     }
     private void createRect(){

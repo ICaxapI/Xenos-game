@@ -10,18 +10,16 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.PerformanceCounter;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Olejon on 16.04.2017.
  */
 public class Cloud extends Actor{
-    public PerformanceCounter timermer;
-    public Sound peek;
+    private Sound peek;
     private static boolean initialized = false;
     private static TextureRegion texltRegion;
     private static TextureRegion texlbRegion;
@@ -43,14 +41,20 @@ public class Cloud extends Actor{
     private Sprite mrSprite;
     private Sprite mbSprite;
     public Label myLabel;
+    private Cloud exemp;
+    private char lastSymbol;
+    private int counter;
     public String needString;
     private float x;
     private float y;
     private float scale;
     private Label.LabelStyle labelStyle;
+    private static Timer timer;
+    private TimerTask timerTask;
 
-    public Cloud(Texture atlas, float x, float y, String string, BitmapFont font, Stage stage, float scale){
+    public Cloud(Texture atlas, float x, float y, String string, BitmapFont font, Stage stage, float scale,int period, String soundPatch){
         if (!initialized) {
+            timer = new Timer(true);
             atlas.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
             texltRegion = new TextureRegion(atlas, 0, 0, 3, 3);
             texlbRegion = new TextureRegion(atlas, 0, 8, 3, 3);
@@ -62,9 +66,9 @@ public class Cloud extends Actor{
             texmrRegion = new TextureRegion(atlas, 8, 3, 3, 5);
             texmbRegion = new TextureRegion(atlas, 3, 8, 5, 3);
             textail = new TextureRegion(atlas, 11, 10, 5, 6);
-            peek = Gdx.audio.newSound(Gdx.files.internal("resources/music/peek.wav"));
             initialized = true;
         }
+        peek = Gdx.audio.newSound(Gdx.files.internal(soundPatch));
         labelStyle = new Label.LabelStyle();//Не забыть dispose!
         labelStyle.font = font;
         myLabel = new Label(string, labelStyle);
@@ -86,36 +90,34 @@ public class Cloud extends Actor{
         updateCloud();
         setPosition(x, y);
         stage.addActor(this);
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(new MyTimerTask(this), 0, 75, TimeUnit.MILLISECONDS);
+        updateCloud();
+        timerTask = new MyTimerTask();
+        timer.scheduleAtFixedRate(timerTask, period, period);
     }
 
-    public void updateCloud(){
-        ltSprite.setSize(texltRegion.getRegionWidth()*scale,texltRegion.getRegionHeight()*scale);
+    private void updateCloud(){
+        ltSprite.setSize(texltRegion.getRegionWidth() * scale, texltRegion.getRegionHeight() * scale);
         ltSprite.setPosition(x - ltSprite.getWidth(), y + myLabel.getHeight());
-        mtSprite.setSize(myLabel.getPrefWidth(),texmtRegion.getRegionHeight()*scale);
-        mtSprite.setPosition(x , y + myLabel.getHeight());
-        rtSprite.setSize(texrtRegion.getRegionWidth()*scale,texrtRegion.getRegionHeight()*scale);
-        rtSprite.setPosition(x + myLabel.getPrefWidth(), y + myLabel.getHeight());
-        mlSprite.setSize(texmlRegion.getRegionWidth()*scale, myLabel.getHeight());
+        mtSprite.setSize(myLabel.getWidth(), texmtRegion.getRegionHeight() * scale);
+        mtSprite.setPosition(x, y + myLabel.getHeight());
+        rtSprite.setSize(texrtRegion.getRegionWidth() * scale, texrtRegion.getRegionHeight() * scale);
+        rtSprite.setPosition(x + myLabel.getWidth(), y + myLabel.getHeight());
+        mlSprite.setSize(texmlRegion.getRegionWidth() * scale, myLabel.getHeight());
         mlSprite.setPosition(x - mlSprite.getWidth(), y);
-        cSprite.setSize(myLabel.getPrefWidth(), myLabel.getHeight());
-        cSprite.setPosition(x , y);
-        mrSprite.setSize(texmlRegion.getRegionWidth()*scale, myLabel.getHeight());
-        mrSprite.setPosition(x + myLabel.getPrefWidth(), y);
-        lbSprite.setSize(texlbRegion.getRegionWidth()*scale,texlbRegion.getRegionHeight()*scale);
+        cSprite.setSize(myLabel.getWidth(), myLabel.getHeight());
+        cSprite.setPosition(x, y);
+        mrSprite.setSize(texmlRegion.getRegionWidth() * scale, myLabel.getHeight());
+        mrSprite.setPosition(x + myLabel.getWidth(), y);
+        lbSprite.setSize(texlbRegion.getRegionWidth() * scale, texlbRegion.getRegionHeight() * scale);
         lbSprite.setPosition(x - lbSprite.getWidth(), y - lbSprite.getHeight());
-        mbSprite.setSize(myLabel.getPrefWidth(),texmbRegion.getRegionHeight()*scale);
+        mbSprite.setSize(myLabel.getWidth(), texmbRegion.getRegionHeight() * scale);
         mbSprite.setPosition(x, y - mbSprite.getHeight());
-        rbSprite.setSize(texrbRegion.getRegionWidth()*scale,texrbRegion.getRegionHeight()*scale);
-        rbSprite.setPosition(x + myLabel.getPrefWidth(), y - rbSprite.getHeight());
-
+        rbSprite.setSize(texrbRegion.getRegionWidth() * scale, texrbRegion.getRegionHeight() * scale);
+        rbSprite.setPosition(x + myLabel.getWidth(), y - rbSprite.getHeight());
     }
 
     @Override
     public void draw(Batch batch, float alpha){
-        updateCloud();
-
         ltSprite.draw(batch);
         mtSprite.draw(batch);
         rtSprite.draw(batch);
@@ -125,11 +127,12 @@ public class Cloud extends Actor{
         lbSprite.draw(batch);
         mbSprite.draw(batch);
         rbSprite.draw(batch);
-
         myLabel.draw(batch, 1f);
+        updateCloud();
     }
 
     public void dispose(){
+        peek.dispose();
 
     }
 
@@ -137,28 +140,35 @@ public class Cloud extends Actor{
     public void act(float delta){
         super.act(delta);
     }
-}
-class MyTimerTask implements Runnable {
-    Cloud exemp;
-    char lastSymbol;
-    int counter;
-    MyTimerTask(Cloud exemp){
-        this.exemp = exemp;
-    }
-    public void run() {
-        exemp.peek.stop();
-        exemp.myLabel.setText("");
-        if (exemp.myLabel.getText().toString() != exemp.needString) {
-            for (int i = 0; i <= counter; i++) {
-                exemp.myLabel.setText(exemp.myLabel.getText().toString() + exemp.needString.charAt(i));
-                lastSymbol = exemp.needString.charAt(i);
+
+    class MyTimerTask extends TimerTask {
+        private char lastSymbol;
+        private int counter;
+
+        MyTimerTask( ) {
+        }
+
+        public void run( ) {
+            peek.stop( ) ;
+            if ( !Objects.equals( myLabel.getText( ).toString( ), needString ) ) {
+                StringBuilder temp = new StringBuilder ( );
+                for ( int i = 0; i <= counter; i++ ) {
+                    temp.append(needString.charAt( i ) );
+                    lastSymbol = needString.charAt( i );
+                }
+                counter++;
+                myLabel.setText( temp.toString( ) );
+                if ( lastSymbol != ' ' && lastSymbol != '\n' ) {
+                    peek.play ( );
+                }
             }
-            counter++;
-            if (lastSymbol != ' ' & lastSymbol != '\n') {
-                exemp.peek.play();
+            else {
+                timerTask.cancel ( );
             }
         }
+
     }
 }
+
 
 
