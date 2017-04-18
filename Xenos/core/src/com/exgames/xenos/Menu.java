@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.exgames.xenos.actors.*;
+import com.exgames.xenos.maps.NewGame;
 
 
 /**
@@ -139,7 +139,7 @@ public class Menu implements Screen {
     }
 
     public void newWorld(){
-        Screen physics = new NewWorld(game, batch, viewport);
+        Screen physics = new NewGame(game, batch, viewport);
         game.setScreen(physics);
     }
 
