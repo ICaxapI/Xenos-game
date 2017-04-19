@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.exgames.xenos.actors.Hero;
 
 
 /**
@@ -23,7 +24,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class WorldBuilder implements Screen {
     private static double mouseGrad;
     private static boolean updateGrad = true;
-
+    private BodyEditorLoader loader;
     private Texture texhero;
     private Sprite hero;
     private Game game;
@@ -68,9 +69,12 @@ public class WorldBuilder implements Screen {
         Gdx.input.setInputProcessor(inputController);
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
+        texhero = new Texture(Gdx.files.internal("resources/texture/hero.png"));
+        Hero hero = new Hero(texhero, centerx,centery, texhero.getWidth(), texhero.getHeight());
+        stage.addActor(hero);
     }
     private void createRect(){
-        BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("resources/maps/NewWorld.json"));
+        loader = new BodyEditorLoader(Gdx.files.internal("resources/maps/NewWorld.json"));
         BodyDef body = new BodyDef();
         body.type = BodyDef.BodyType.DynamicBody;
         body.position.set(camera.viewportWidth/2f,camera.viewportHeight/2f);

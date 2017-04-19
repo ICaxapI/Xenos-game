@@ -67,7 +67,7 @@ public class NewGame extends WorldBuilder {
         Body wall = getWorld().createBody(body);
         FixtureDef fdef = new FixtureDef();
         fdef.restitution = 0.0f;
-        fdef.friction = 2.0f;
+        fdef.friction = 0.0f;
         fdef.density = 100;
         loader.attachFixture(wall,"CaptainCabin",fdef,1f);
     }
