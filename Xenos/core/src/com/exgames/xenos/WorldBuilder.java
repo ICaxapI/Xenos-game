@@ -10,18 +10,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.exgames.xenos.actors.Hero;
 
 
 /**
  * Created by Alex on 09.04.2017.
  */
 public class WorldBuilder implements Screen {
+    public static final float PIXINMET = 1f/44f;
+    private Vector2 heroModelOrigin;
     private static double mouseGrad;
     private static boolean updateGrad = true;
     private BodyEditorLoader loader;
@@ -69,9 +71,10 @@ public class WorldBuilder implements Screen {
         Gdx.input.setInputProcessor(inputController);
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
-        texhero = new Texture(Gdx.files.internal("resources/texture/hero.png"));
-        Hero hero = new Hero(texhero, centerx,centery, texhero.getWidth(), texhero.getHeight());
-        stage.addActor(hero);
+        texhero = new Texture(Gdx.files.internal("resources/texture/hero2.png"));
+        texhero.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        hero = new Sprite(texhero);
+        hero.setSize(0.63f, 0.86f);
     }
     private void createRect(){
         loader = new BodyEditorLoader(Gdx.files.internal("resources/maps/NewWorld.json"));
@@ -86,6 +89,7 @@ public class WorldBuilder implements Screen {
         fdef.friction = 2.0f;
         fdef.density = 100;
         loader.attachFixture(rect,"Hero",fdef,1f);
+        heroModelOrigin = loader.getOrigin("Hero", PIXINMET).cpy();
     }
 
     public Camera getCamera(){
@@ -96,6 +100,11 @@ public class WorldBuilder implements Screen {
     }
     @Override
     public void render(float delta) {
+        Vector2 heroPos = rect.getPosition().sub(heroModelOrigin);
+        hero.setPosition(heroPos.x, heroPos.y);
+        hero.setOrigin(heroModelOrigin.x, heroModelOrigin.y);
+        hero.setRotation(rect.getAngle() * MathUtils.radiansToDegrees);
+
         if (updateGrad){
             updateMouse(this);
         }
@@ -113,6 +122,7 @@ public class WorldBuilder implements Screen {
         stage.act(delta);
         stage.draw();
         batch.begin();
+        hero.draw(batch);
         batch.end();
         updateHeroInput();
     }

@@ -21,16 +21,16 @@ public class InputController implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.A){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(-5,0)));
+            world.setHeroVector(world.getHeroVector().add(new Vector2(-3,0)));
         }
         if (keycode == Input.Keys.D){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(5,0)));
+            world.setHeroVector(world.getHeroVector().add(new Vector2(3,0)));
         }
         if (keycode == Input.Keys.W){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(0,5)));
+            world.setHeroVector(world.getHeroVector().add(new Vector2(0,3)));
         }
         if (keycode == Input.Keys.S){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(0,-5)));
+            world.setHeroVector(world.getHeroVector().add(new Vector2(0,-3)));
         }
         return false;
     }
@@ -38,16 +38,16 @@ public class InputController implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.A){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(5,0)));
+            world.setHeroVector(world.getHeroVector().add(new Vector2(3,0)));
         }
         if (keycode == Input.Keys.D){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(-5,0)));
+            world.setHeroVector(world.getHeroVector().add(new Vector2(-3,0)));
         }
         if (keycode == Input.Keys.W){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(0,-5)));
+            world.setHeroVector(world.getHeroVector().add(new Vector2(0,-3)));
         }
         if (keycode == Input.Keys.S){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(0,5)));
+            world.setHeroVector(world.getHeroVector().add(new Vector2(0,3)));
         }
         return false;
     }
