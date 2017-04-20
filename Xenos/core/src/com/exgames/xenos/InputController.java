@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
  * Created by Alex on 06.04.2017.
  */
 public class InputController implements InputProcessor {
+    private static float speed = 3;
     private static double a;
     private static double b;
     private static double c;
@@ -25,20 +26,20 @@ public class InputController implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.A){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(-3,0)));
             pressA = true;
+            calcVector(speed);
         }
         if (keycode == Input.Keys.D){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(3,0)));
             pressD = true;
+            calcVector(speed);
         }
         if (keycode == Input.Keys.W){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(0,3)));
             pressW = true;
+            calcVector(speed);
         }
         if (keycode == Input.Keys.S){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(0,-3)));
             pressS = true;
+            calcVector(speed);
         }
         world.setKeyboardUpdate(true);
         return false;
@@ -47,26 +48,57 @@ public class InputController implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.A){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(3,0)));
             pressA = false;
+            calcVector(speed);
         }
         if (keycode == Input.Keys.D){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(-3,0)));
             pressD = false;
+            calcVector(speed);
         }
         if (keycode == Input.Keys.W){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(0,-3)));
             pressW = false;
+            calcVector(speed);
         }
         if (keycode == Input.Keys.S){
-            world.setHeroVector(world.getHeroVector().add(new Vector2(0,3)));
             pressS = false;
+            calcVector(speed);
         }
         if (!pressA && !pressS && !pressD && !pressW) {
             world.setKeyboardUpdate(false);
             world.setMouseGrad(0);
         }
         return false;
+    }
+    public void calcVector(float localspeed){
+        if (pressA){
+            if (pressW){
+                if (!pressS) {
+                    world.setHeroVector(new Vector2(-localspeed/2f, localspeed/2f));
+                }
+            } else if (pressS){
+                world.setHeroVector(new Vector2(-localspeed/2f, -localspeed/2f));
+            } else if (!pressD){
+                world.setHeroVector(new Vector2(-localspeed,0));
+            }
+        } else if (pressD){
+            if (pressW){
+                if (!pressS) {
+                    world.setHeroVector(new Vector2(localspeed/2f, localspeed/2f));
+                }
+            } else if (pressS){
+                world.setHeroVector(new Vector2(localspeed/2f, -localspeed/2f));
+            } else {
+                world.setHeroVector(new Vector2(localspeed,0));
+            }
+        } else if (pressS){
+            if (!pressW){
+                world.setHeroVector(new Vector2(0,-localspeed));
+            }
+        } else if (pressW){
+            world.setHeroVector(new Vector2(0,localspeed));
+        } else {
+            world.setHeroVector(new Vector2(0,0));
+        }
     }
 
     @Override
