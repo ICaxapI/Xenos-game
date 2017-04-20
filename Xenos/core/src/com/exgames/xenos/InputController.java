@@ -12,6 +12,10 @@ public class InputController implements InputProcessor {
     private static double b;
     private static double c;
     private static double grad;
+    private static boolean pressW;
+    private static boolean pressA;
+    private static boolean pressS;
+    private static boolean pressD;
     private static WorldBuilder world;
 
     public InputController(WorldBuilder world){
@@ -22,16 +26,21 @@ public class InputController implements InputProcessor {
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.A){
             world.setHeroVector(world.getHeroVector().add(new Vector2(-3,0)));
+            pressA = true;
         }
         if (keycode == Input.Keys.D){
             world.setHeroVector(world.getHeroVector().add(new Vector2(3,0)));
+            pressD = true;
         }
         if (keycode == Input.Keys.W){
             world.setHeroVector(world.getHeroVector().add(new Vector2(0,3)));
+            pressW = true;
         }
         if (keycode == Input.Keys.S){
             world.setHeroVector(world.getHeroVector().add(new Vector2(0,-3)));
+            pressS = true;
         }
+        world.setKeyboardUpdate(true);
         return false;
     }
 
@@ -39,15 +48,23 @@ public class InputController implements InputProcessor {
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.A){
             world.setHeroVector(world.getHeroVector().add(new Vector2(3,0)));
+            pressA = false;
         }
         if (keycode == Input.Keys.D){
             world.setHeroVector(world.getHeroVector().add(new Vector2(-3,0)));
+            pressD = false;
         }
         if (keycode == Input.Keys.W){
             world.setHeroVector(world.getHeroVector().add(new Vector2(0,-3)));
+            pressW = false;
         }
         if (keycode == Input.Keys.S){
             world.setHeroVector(world.getHeroVector().add(new Vector2(0,3)));
+            pressS = false;
+        }
+        if (!pressA && !pressS && !pressD && !pressW) {
+            world.setKeyboardUpdate(false);
+            world.setMouseGrad(0);
         }
         return false;
     }
@@ -82,8 +99,8 @@ public class InputController implements InputProcessor {
         if (a < 0){
             grad = 360-grad;
         }
+        world.setMouseUpdate(true);
         world.setMouseGrad(grad + 90);
-        world.setUpdateGrad(true);
         return false;
     }
 

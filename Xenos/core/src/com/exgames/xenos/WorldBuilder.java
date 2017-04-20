@@ -17,6 +17,9 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.atan2;
+
 
 /**
  * Created by Alex on 09.04.2017.
@@ -25,11 +28,15 @@ public class WorldBuilder implements Screen {
     public static final float PIXINMET = 1f/44f;
     private Vector2 heroModelOrigin;
     private static double mouseGrad;
-    private static boolean updateGrad = true;
+    private static boolean keyboardUpdate = false;
     private BodyEditorLoader loader;
     private Texture texhero;
     private Sprite hero;
     private Game game;
+    private static double a;
+    private static double b;
+    private static double c;
+    private static double grad;
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Viewport viewport;
@@ -41,6 +48,7 @@ public class WorldBuilder implements Screen {
     private InputController inputController;
     private static float centerx;
     private static float centery;
+    private boolean mouseUpdate;
     public static final String FONT_CHARACTERS = "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩщЪъЫыЬХхьЭэЮюЯяabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
     private Vector2 heroVector;
 
@@ -104,15 +112,12 @@ public class WorldBuilder implements Screen {
         hero.setPosition(heroPos.x, heroPos.y);
         hero.setOrigin(heroModelOrigin.x, heroModelOrigin.y);
         hero.setRotation(rect.getAngle() * MathUtils.radiansToDegrees);
-
-        if (updateGrad){
-            updateMouse(this);
-        }
+        updateGrad(this);
         float fps = Gdx.graphics.getFramesPerSecond();
         if (fps < 1){
             fps = 60;
         }
-        Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
+        Gdx.gl.glClearColor(0f,0f, 0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.position.set(rect.getWorldPoint(rect.getLocalCenter()),0);
         camera.update();
@@ -136,8 +141,33 @@ public class WorldBuilder implements Screen {
         getRect().setLinearVelocity(heroVector);
     }
 
-    public void updateMouse(WorldBuilder world){
+    public void updateGrad(WorldBuilder world){
         double gradRect = Math.toDegrees(world.rect.getAngle());
+        if (mouseUpdate) {
+            gradneed = (float) mouseGrad - (float) gradRect;
+            while (gradneed >= 359.99f){
+                gradneed -= 360;
+            }
+            while (gradneed <= -359.99f){
+                gradneed += 360;
+            }
+        } else if (keyboardUpdate){
+            if (heroVector.x == 0 & heroVector.y == 0) {
+
+            } else {
+                mouseGrad = atan2(heroVector.x, heroVector.y) * 180 / PI;
+                mouseGrad = 360 - mouseGrad + 90;
+                gradneed = (float) Math.abs(mouseGrad) - (float) gradRect;
+                while (gradneed >= 359.99f) {
+                    gradneed -= 360;
+                }
+                while (gradneed <= -359.99f) {
+                    gradneed += 360;
+                }
+            }
+        } else {
+            gradneed = 0;
+        }
         if (gradRect >= 0) {
             while (gradRect >= 360) {
                 gradRect -= 360;
@@ -148,7 +178,6 @@ public class WorldBuilder implements Screen {
             }
             gradRect += 360;
         }
-        gradneed = (float) mouseGrad - (float) gradRect;
         if        (gradneed >= 0 & Math.abs(gradneed) < 180){
             world.rect.setAngularVelocity(gradneed/5);
         } else if (gradneed <= 0 & Math.abs(gradneed) < 180){
@@ -166,15 +195,18 @@ public class WorldBuilder implements Screen {
                 world.rect.setAngularVelocity(( 360 - gradneed)/5);
             }
         }
-        if (Math.abs(gradneed) <= 0.005f){
-            updateGrad = false;
+        if (Math.abs(gradneed) <= 0.1f){
+            setMouseUpdate(false);
         }
-    }
-    public void setUpdateGrad(boolean temp){
-        updateGrad = temp;
     }
     public void setMouseGrad(double temp){
         mouseGrad = temp;
+    }
+    public void setMouseUpdate(boolean temp){
+        mouseUpdate = temp;
+    }
+    public void setKeyboardUpdate(boolean temp){
+        keyboardUpdate = temp;
     }
     public Body getRect(){
         return rect;
