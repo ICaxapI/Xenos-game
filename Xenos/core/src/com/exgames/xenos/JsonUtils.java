@@ -4,8 +4,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import java.io.*;
-
 /**
  * Created by Olejon on 15.04.2017.
  */
@@ -30,5 +28,8 @@ public class JsonUtils {
         } catch (org.json.simple.parser.ParseException e) {
             e.printStackTrace();
         }
+    }
+    public static void parseSettings(String resultJson){
+
     }
 }

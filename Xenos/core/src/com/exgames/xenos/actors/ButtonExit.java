@@ -1,5 +1,6 @@
 package com.exgames.xenos.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -26,6 +27,7 @@ public class ButtonExit extends  ButtonMenu {
                 clicked = true;
                 updateSprite();
                 Main.menu.dispose();
+                Gdx.app.exit();
                 System.exit(0);
                 return super.touchDown(event, x, y, pointer, button);
             }

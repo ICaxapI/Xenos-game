@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.exgames.xenos.Main;
 
 import java.util.Objects;
 import java.util.Timer;
@@ -41,9 +42,6 @@ public class Cloud extends Actor{
     private Sprite mrSprite;
     private Sprite mbSprite;
     public Label myLabel;
-    private Cloud exemp;
-    private char lastSymbol;
-    private int counter;
     public String needString;
     private float x;
     private float y;
@@ -133,7 +131,6 @@ public class Cloud extends Actor{
 
     public void dispose(){
         peek.dispose();
-
     }
 
     @Override
@@ -159,7 +156,7 @@ public class Cloud extends Actor{
                 counter++;
                 myLabel.setText( temp.toString( ) );
                 if ( lastSymbol != ' ' && lastSymbol != '\n' ) {
-                    peek.play ( );
+                    peek.play(Main.volumeSound);
                 }
             }
             else {

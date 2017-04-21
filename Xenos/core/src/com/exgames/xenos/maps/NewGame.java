@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -23,6 +24,7 @@ import com.exgames.xenos.actors.Cloud;
 public class NewGame extends WorldBuilder {
     private BitmapFont font;
     private Texture cloud;
+    private Vector2 wallModelOrigin;
 
     public NewGame(Game game, SpriteBatch batch, Viewport viewport) {
         super(game, batch, viewport);
@@ -70,5 +72,6 @@ public class NewGame extends WorldBuilder {
         fdef.friction = 0.0f;
         fdef.density = 100;
         loader.attachFixture(wall,"CaptainCabin",fdef,1f);
+        wallModelOrigin = loader.getOrigin("Hero", PIXINMET).cpy();
     }
 }

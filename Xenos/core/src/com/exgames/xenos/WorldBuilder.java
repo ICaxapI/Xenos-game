@@ -25,7 +25,7 @@ import static java.lang.Math.atan2;
  * Created by Alex on 09.04.2017.
  */
 public class WorldBuilder implements Screen {
-    public static final float PIXINMET = 1f/44f;
+    protected static final float PIXINMET = 1f/23f;
     private Vector2 heroModelOrigin;
     private static double mouseGrad;
     private static boolean keyboardUpdate = false;

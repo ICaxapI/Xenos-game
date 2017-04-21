@@ -36,14 +36,12 @@ public class Menu implements Screen {
     private MenuObj xenosLogo;
     private MenuObj buttonsFrame;
 
-    private InputController controller;
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Viewport viewport;
     private Stage stage;
     private Music music;
 
-    private Animator runner;
     private Sprite starsSprite1;
     private Sprite starsSprite2;
     private Sprite starsSprite3;
@@ -65,11 +63,17 @@ public class Menu implements Screen {
     @Override
     public void show() {
         //runner = new Animator("animation_sheet.png");
+        if (!Main.skipLogo){
+            Main.logo.dispose();
+            Main.logo = null;
+        }
         stage = new Stage(viewport);
         music = Gdx.audio.newMusic(Gdx.files.internal("resources/music/loop.ogg"));
         music.setLooping(true);
-        music.setVolume(Main.volume);
-        music.play();
+        music.setVolume(Main.volumeMusic);
+        if (!music.isPlaying()){
+            music.play();
+        }
         texStars = new Texture(Gdx.files.internal("resources/background/atlasStars.png"));
         texStars.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         TextureRegion texstars1 = new TextureRegion(texStars, 0, 0, 1024, 1024);
@@ -140,6 +144,7 @@ public class Menu implements Screen {
 
     public void newWorld(){
         Screen physics = new NewGame(game, batch, viewport);
+        music.stop();
         game.setScreen(physics);
     }
 
@@ -150,8 +155,11 @@ public class Menu implements Screen {
         float alias3 = (0.2f*delta*100);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        if (fadeMenu != 1){
-            fadeMenu = fadeIn(fadeMenu);
+        if (fadeMenu < 1){
+            fadeMenu += delta;
+            if (fadeMenu > 1) {
+                fadeMenu = 1;
+            }
         }
         starsSprite1.setPosition(starsSprite1.getX() - alias1, starsSprite1.getY());
         starsSprite2.setPosition(starsSprite2.getX() - alias2, starsSprite2.getY());
@@ -210,12 +218,11 @@ public class Menu implements Screen {
 
     @Override
     public void dispose() {
-        batch.dispose();
         music.dispose();
-        game.dispose();
         stage.dispose();
         texButtons.dispose();
         texStars.dispose();
         texXenosLogo.dispose();
+        texButtonsFrame.dispose();
     }
 }

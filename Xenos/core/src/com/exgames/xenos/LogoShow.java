@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import javax.swing.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Alex on 08.04.2017.
@@ -19,7 +20,10 @@ public class LogoShow implements Screen {
     private Sprite logo;
     private float fadeLogo = 0f;
     private boolean completelogo = false;
-    private Timer timer = new Timer(1000, e -> completelogo = true);
+    private Texture texLogo;
+    private TimerTask timerTask;
+    private static Timer timer;
+    private boolean timerStart;
 
     public LogoShow(Game game, SpriteBatch batch){
         this.game = game;
@@ -28,30 +32,38 @@ public class LogoShow implements Screen {
 
     @Override
     public void show() {
-        Texture texLogo = new Texture(Gdx.files.internal("resources/FinalNEW.png"));
+        texLogo = new Texture(Gdx.files.internal("resources/FinalNEW.png"));
         texLogo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         logo = new Sprite(texLogo);
         logo.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getWidth()/2);
         logo.setPosition(0,((Gdx.graphics.getHeight()-(Gdx.graphics.getWidth()/2))/2));
-    }
+        timerTask = new MyTimerTask();
+        timer = new Timer();
 
+    }
+    public void stopTimer(){
+        timer.cancel();
+        timerTask.cancel();
+    }
     @Override
     public void render(float delta) {
         if (!completelogo) {
             if (fadeLogo < 1) {
-                fadeLogo = fadeLogo + 0.01f;
+                fadeLogo = fadeLogo + delta;
             }
             if (fadeLogo >= 1) {
                 fadeLogo = 1;
-                timer.start();
+                if (!timerStart){
+                    timerStart = true;
+                    timer.scheduleAtFixedRate(timerTask, 1000, 1000);
+                }
             }
         } else {
             if (fadeLogo <= 1) {
-                fadeLogo = fadeLogo - 0.01f;
+                fadeLogo = fadeLogo - delta;
             }
             if (fadeLogo <= 0) {
                 fadeLogo = 0;
-                timer.stop();
                 completelogo = false;
                 game.setScreen(Main.menu);
             }
@@ -86,6 +98,15 @@ public class LogoShow implements Screen {
     @Override
     public void dispose() {
         System.out.println("dispose");
-        batch.dispose();
+        texLogo.dispose();
+    }
+    class MyTimerTask extends TimerTask {
+        MyTimerTask( ) {
+        }
+        public void run( ) {
+            completelogo = true;
+            stopTimer();
+        }
+
     }
 }
