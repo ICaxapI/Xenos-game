@@ -113,7 +113,7 @@ public class DesktopLauncher {
 			}
 		} else {
 			System.out.println("Не найденна папка.");
-			createDirectory(Gdx.files.external("Saved Games/Xenos"));
+			createDirectory(files.external("Saved Games/Xenos"));
 			System.out.println("Созданна папка игры.");
 			checkSettings();
 		}

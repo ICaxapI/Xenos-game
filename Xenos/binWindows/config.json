@@ -1,0 +1,9 @@
+{
+  "classPath": [
+    "desktop-1.0.jar"
+  ],
+  "mainClass": "com.exgames.xenos.desktop.DesktopLauncher",
+  "vmArgs": [
+    "-Xmx1G"
+  ]
+}
