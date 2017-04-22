@@ -54,12 +54,12 @@ public class NewGame extends WorldBuilder {
         System.out.println("Время парсинга Json: " + kek2.current);
         System.out.println("Время загрузки Json: " + kek.current);
         cloud = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
-        String string = "Можно грабить корованы. А можно и не.";
+        String string = "Ну такое.";
         Cloud cloudActor = new Cloud(cloud,20,40 , string, font, stage, 5,60, "resources/music/peek.wav");
-        createVall();
+        createWall();
     }
 
-    public void createVall(){
+    public void createWall(){
         BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("resources/maps/NewWorld.json"));
         BodyDef body = new BodyDef();
         body.type = BodyDef.BodyType.StaticBody;

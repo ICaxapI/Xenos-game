@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.exgames.xenos.actors.Hero;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
@@ -25,26 +26,22 @@ import static java.lang.Math.atan2;
  * Created by Alex on 09.04.2017.
  */
 public class WorldBuilder implements Screen {
-    protected static final float PIXINMET = 1f/23f;
+    public static final float PIXINMET = 1f/23f;
+    private static Camera camera;
     private Vector2 heroModelOrigin;
     private static double mouseGrad;
     private static boolean keyboardUpdate = false;
     private BodyEditorLoader loader;
     private Texture texhero;
-    private Sprite hero;
+    private Hero hero;
     private Game game;
-    private static double a;
-    private static double b;
-    private static double c;
-    private static double grad;
-    private OrthographicCamera camera;
     private SpriteBatch batch;
     private Viewport viewport;
     protected Stage stage;
     private boolean press = false;
     private com.badlogic.gdx.physics.box2d.World world;
     private Box2DDebugRenderer renderer;
-    private static Body rect;
+    private static Body heroBody;
     private InputController inputController;
     private static float centerx;
     private static float centery;
@@ -81,23 +78,13 @@ public class WorldBuilder implements Screen {
         centery = Gdx.graphics.getHeight()/2f;
         texhero = new Texture(Gdx.files.internal("resources/texture/hero2.png"));
         texhero.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        hero = new Sprite(texhero);
-        hero.setSize(0.63f, 0.86f);
+        hero = new Hero(texhero, "NewWorld", "Hero", BodyDef.BodyType.DynamicBody, 100, 0.63f, 0.86f);
+        heroBody = world.createBody(hero.getBody());
+        hero.setRect(heroBody);
+        hero.attFix();
     }
     private void createRect(){
-        loader = new BodyEditorLoader(Gdx.files.internal("resources/maps/NewWorld.json"));
-        BodyDef body = new BodyDef();
-        body.type = BodyDef.BodyType.DynamicBody;
-        body.position.set(camera.viewportWidth/2f,camera.viewportHeight/2f);
-        body.linearDamping = 1.0f;
-        body.angularDamping = 4.0f;
-        rect = world.createBody(body);
-        FixtureDef fdef = new FixtureDef();
-        fdef.restitution = 0.0f;
-        fdef.friction = 2.0f;
-        fdef.density = 100;
-        loader.attachFixture(rect,"Hero",fdef,1f);
-        heroModelOrigin = loader.getOrigin("Hero", PIXINMET).cpy();
+
     }
 
     public Camera getCamera(){
@@ -108,27 +95,23 @@ public class WorldBuilder implements Screen {
     }
     @Override
     public void render(float delta) {
-        Vector2 heroPos = rect.getPosition().sub(heroModelOrigin);
-        hero.setPosition(heroPos.x, heroPos.y);
-        hero.setOrigin(heroModelOrigin.x, heroModelOrigin.y);
-        hero.setRotation(rect.getAngle() * MathUtils.radiansToDegrees);
-        updateGrad(this);
         float fps = Gdx.graphics.getFramesPerSecond();
         if (fps < 1){
             fps = 60;
         }
         Gdx.gl.glClearColor(0f,0f, 0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        camera.position.set(rect.getWorldPoint(rect.getLocalCenter()),0);
+        updateGrad(this);
+        batch.begin();
+        hero.draw(batch);
+        batch.end();
+        camera.position.set(heroBody.getWorldPoint(heroBody.getLocalCenter()),0);
         camera.update();
         renderer.render(world,camera.combined);
         world.step(1/fps,5,5);
         batch.setProjectionMatrix(camera.combined);
         stage.act(delta);
         stage.draw();
-        batch.begin();
-        hero.draw(batch);
-        batch.end();
         updateHeroInput();
     }
     public void setHeroVector(Vector2 updateVector){
@@ -138,11 +121,11 @@ public class WorldBuilder implements Screen {
         return heroVector;
     }
     public void updateHeroInput(){
-        getRect().setLinearVelocity(heroVector);
+        getHeroBody().setLinearVelocity(heroVector);
     }
 
     public void updateGrad(WorldBuilder world){
-        double gradRect = Math.toDegrees(world.rect.getAngle());
+        double gradRect = Math.toDegrees(world.heroBody.getAngle());
         if (mouseUpdate) {
             gradneed = (float) mouseGrad - (float) gradRect;
             while (gradneed >= 359.99f){
@@ -179,20 +162,20 @@ public class WorldBuilder implements Screen {
             gradRect += 360;
         }
         if        (gradneed >= 0 & Math.abs(gradneed) < 180){
-            world.rect.setAngularVelocity(gradneed/5);
+            world.heroBody.setAngularVelocity(gradneed/5);
         } else if (gradneed <= 0 & Math.abs(gradneed) < 180){
-            world.rect.setAngularVelocity(gradneed/5);
+            world.heroBody.setAngularVelocity(gradneed/5);
         } else if (gradneed >= 0 & Math.abs(gradneed) >= 180){
             if (gradneed < 0) {
-                world.rect.setAngularVelocity((-360 - gradneed)/5);
+                world.heroBody.setAngularVelocity((-360 - gradneed)/5);
             } else {
-                world.rect.setAngularVelocity((-360 + gradneed)/5);
+                world.heroBody.setAngularVelocity((-360 + gradneed)/5);
             }
         } else if (gradneed <= 0 & Math.abs(gradneed) >= 180){
             if (gradneed < 0) {
-                world.rect.setAngularVelocity(( 360 + gradneed)/5);
+                world.heroBody.setAngularVelocity(( 360 + gradneed)/5);
             } else {
-                world.rect.setAngularVelocity(( 360 - gradneed)/5);
+                world.heroBody.setAngularVelocity(( 360 - gradneed)/5);
             }
         }
         if (Math.abs(gradneed) <= 0.1f){
@@ -208,8 +191,8 @@ public class WorldBuilder implements Screen {
     public void setKeyboardUpdate(boolean temp){
         keyboardUpdate = temp;
     }
-    public Body getRect(){
-        return rect;
+    public Body getHeroBody(){
+        return heroBody;
     }
     public float getCenterx(){
         return centerx;
