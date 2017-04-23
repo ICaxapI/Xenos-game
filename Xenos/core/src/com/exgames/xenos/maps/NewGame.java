@@ -62,9 +62,10 @@ public class NewGame extends WorldBuilder {
         Cloud cloudActor = new Cloud(cloud,20,40 , string, font, stage, 5,60, "resources/music/peek.wav");
         wall = new WorldObject("NewWorld", "CaptainCabin", BodyDef.BodyType.StaticBody, 100, 0, 0, 0, 5, camera.viewportWidth/2f,camera.viewportHeight/2f);
         createNewObj(wall);
-        door = new Door("NewWorld", "Door", BodyDef.BodyType.KinematicBody, 100, 0, 0, 0, 0, camera.viewportWidth/2f,camera.viewportHeight/2f);
+        door = new Door("NewWorld", "Door", BodyDef.BodyType.KinematicBody, 100, 0, 0, 0, 0, camera.viewportWidth/2f-2.125f,camera.viewportHeight/2f-0.5f);
         createNewObj(door);
-        Detector detector = new Detector(1, camera.viewportWidth/2f,camera.viewportHeight/2f);
-        createDetector(door, detector);
+        Detector detector = new Detector(0.5f, door.getRect().getWorldPoint(door.getRect().getLocalCenter()).x,camera.viewportHeight/2f-0.5f);
+        createDetector(door, detector, true);
+        door.initVector();
     }
 }

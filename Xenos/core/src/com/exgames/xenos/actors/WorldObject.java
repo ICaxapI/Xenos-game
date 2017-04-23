@@ -23,7 +23,7 @@ public class WorldObject {
     private Body rect;
     private BodyDef body;
     private Vector2 modelOrigin;
-    private Sprite mySprite;
+    protected Sprite mySprite;
     private String nameModel;
     private FixtureDef fdef;
 
@@ -62,16 +62,19 @@ public class WorldObject {
     public WorldObject(float radius, float x, float y){
         body = new BodyDef();
         body.type = BodyDef.BodyType.StaticBody;
-        FixtureDef fdef = new FixtureDef();
+        fdef = new FixtureDef();
         CircleShape circleShape = new CircleShape();
         circleShape.setRadius(radius);
         fdef.shape = circleShape;
-        getBody().position.set(x, y);
+        body.position.set(x, y);
     }
 
 
     public void attFix(){
         loader.attachFixture(rect,nameModel,fdef,1f);
+    }
+    public void attFix(Body body){
+        body.createFixture(fdef);
     }
 
 
@@ -97,6 +100,9 @@ public class WorldObject {
     }
     public Vector2 getModelOrigin(){
         return modelOrigin;
+    }
+    public Body getRect(){
+        return rect;
     }
 
     public void setRect(Body rect){

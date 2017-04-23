@@ -21,15 +21,29 @@ public class MyContactListener implements ContactListener {
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-        if ((contact.getFixtureA().getBody().getUserData().equals("Hero")&& contact.getFixtureB().getBody().getUserData().equals("Door"))|
-                (contact.getFixtureA().getBody().getUserData().equals("Door") && contact.getFixtureB().getBody().getUserData().equals("Hero"))){
+        UserData fixA = (UserData) contact.getFixtureA().getBody().getUserData();
+        UserData fixB = (UserData) contact.getFixtureB().getBody().getUserData();
+        if ((fixA.getName().equals("Hero")&& fixB.getName().equals("Door"))|
+                (fixA.getName().equals("Door") && fixB.getName().equals("Hero"))){
+            contact.setEnabled(false);
+        }
+        if (fixA.getName().equals("Detector")){
+            contact.setEnabled(false);
+            fixA.getDoor().swith(fixA.getAxis());
+        }
+        if (fixB.getName().equals("Detector")){
+            contact.setEnabled(false);
+            fixB.getDoor().swith(fixB.getAxis());
         }
     }
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
-        if ((contact.getFixtureA().getBody().getUserData().equals("Hero")&& contact.getFixtureB().getBody().getUserData().equals("Door"))|
-                (contact.getFixtureA().getBody().getUserData().equals("Door") && contact.getFixtureB().getBody().getUserData().equals("Hero"))){
+        UserData fixA = (UserData) contact.getFixtureA().getBody().getUserData();
+        UserData fixB = (UserData) contact.getFixtureB().getBody().getUserData();
+        if ((fixA.getName().equals("Hero")&& fixB.getName().equals("Door"))|
+                (fixA.getName().equals("Door") && fixB.getName().equals("Hero"))){
+            contact.setEnabled(false);
         }
     }
 }

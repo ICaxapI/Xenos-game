@@ -61,7 +61,7 @@ public class WorldBuilder implements Screen {
 
     public WorldBuilder(Game game, SpriteBatch batch, Viewport viewport){
         this.game = game;
-        this.camera = new OrthographicCamera(16,9);;
+        this.camera = new OrthographicCamera(16,9);
         camera.position.set(new Vector3(camera.viewportWidth/2f,camera.viewportHeight/2f,0));
         this.batch = batch;
         this.viewport = viewport;
@@ -87,7 +87,7 @@ public class WorldBuilder implements Screen {
         texhero.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         hero = new Hero(texhero, "NewWorld", "Hero", 100);
         heroBody = createNewObj(hero, heroBody);
-        heroBody.setUserData(hero.getNameModel());
+        heroBody.setUserData(new UserData(hero.getNameModel()));
     }
 
     private Body createNewObj(WorldObject object, Body body){
@@ -97,12 +97,15 @@ public class WorldBuilder implements Screen {
         return body;
     }
 
-    protected void createDetector(Door door, Detector detector){
+    public void createDetector(Door door, Detector detector, boolean axisUpDown){
         Body body = world.createBody(detector.getBody());
         listBody.add(listBody.size(), body);
         listObjects.add(listObjects.size(), detector);
         detector.setRect(body);
-        body.setUserData(new UserData("detector", door));
+        detector.attFix(body);
+        UserData userData =new UserData("Detector", door);
+        userData.setAxisUpDown(axisUpDown);
+        body.setUserData(userData);
     }
 
     protected void createNewObj(WorldObject object){
@@ -111,7 +114,7 @@ public class WorldBuilder implements Screen {
         listObjects.add(listObjects.size(), object);
         object.setRect(body);
         object.attFix();
-        body.setUserData(object.getNameModel());
+        body.setUserData(new UserData(object.getNameModel()));
     }
 
     public Camera getCamera(){
@@ -143,6 +146,7 @@ public class WorldBuilder implements Screen {
         stage.act(delta);
         stage.draw();
         updateHeroInput();
+        //System.out.println(world.getFixtureCount());
     }
     public void setHeroVector(Vector2 updateVector){
         heroVector = updateVector;
