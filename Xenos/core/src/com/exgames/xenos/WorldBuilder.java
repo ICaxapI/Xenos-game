@@ -8,15 +8,18 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.exgames.xenos.actors.Hero;
+import com.exgames.xenos.actors.WorldObject;
+
+import java.util.ArrayList;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
@@ -48,6 +51,8 @@ public class WorldBuilder implements Screen {
     private boolean mouseUpdate;
     public static final String FONT_CHARACTERS = "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩщЪъЫыЬХхьЭэЮюЯяabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
     private Vector2 heroVector;
+    protected static ArrayList<Body> listBody = new ArrayList<>();
+    protected static ArrayList<WorldObject> listObjects = new ArrayList<>();
 
 
     private float gradneed;
@@ -66,7 +71,6 @@ public class WorldBuilder implements Screen {
         stage = new Stage(viewport);
         world = new com.badlogic.gdx.physics.box2d.World(new Vector2(0,0),true);
         renderer = new Box2DDebugRenderer();
-        createRect();
         renderer.setDrawBodies(true);
         renderer.setDrawContacts(true);
         renderer.setDrawInactiveBodies(true);
@@ -78,13 +82,23 @@ public class WorldBuilder implements Screen {
         centery = Gdx.graphics.getHeight()/2f;
         texhero = new Texture(Gdx.files.internal("resources/texture/hero2.png"));
         texhero.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        hero = new Hero(texhero, "NewWorld", "Hero", BodyDef.BodyType.DynamicBody, 100, 0.63f, 0.86f);
-        heroBody = world.createBody(hero.getBody());
-        hero.setRect(heroBody);
-        hero.attFix();
+        hero = new Hero(texhero, "NewWorld", "Hero", 100);
+        heroBody = createNewObj(hero, heroBody);
     }
-    private void createRect(){
 
+    private Body createNewObj(WorldObject object, Body body){
+        body = world.createBody(object.getBody());
+        object.setRect(body);
+        object.attFix();
+        return body;
+    }
+
+    protected void createNewObj(WorldObject object){
+        Body body = world.createBody(object.getBody());
+        listBody.add(listBody.size(), body);
+        listObjects.add(listObjects.size(), object);
+        object.setRect(body);
+        object.attFix();
     }
 
     public Camera getCamera(){

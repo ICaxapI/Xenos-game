@@ -1,6 +1,5 @@
 package com.exgames.xenos.maps;
 
-import aurelienribon.bodyeditor.BodyEditorLoader;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,14 +7,15 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.PerformanceCounter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.exgames.xenos.JsonUtils;
 import com.exgames.xenos.WorldBuilder;
 import com.exgames.xenos.actors.Cloud;
+import com.exgames.xenos.actors.WorldObject;
+
+import static com.exgames.xenos.Main.camera;
 
 
 /**
@@ -25,6 +25,7 @@ public class NewGame extends WorldBuilder {
     private BitmapFont font;
     private Texture cloud;
     private Vector2 wallModelOrigin;
+    private WorldObject wall;
 
     public NewGame(Game game, SpriteBatch batch, Viewport viewport) {
         super(game, batch, viewport);
@@ -56,22 +57,7 @@ public class NewGame extends WorldBuilder {
         cloud = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
         String string = "Ну такое.";
         Cloud cloudActor = new Cloud(cloud,20,40 , string, font, stage, 5,60, "resources/music/peek.wav");
-        createWall();
-    }
-
-    public void createWall(){
-        BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("resources/maps/NewWorld.json"));
-        BodyDef body = new BodyDef();
-        body.type = BodyDef.BodyType.StaticBody;
-        body.position.set(getCamera().viewportWidth/2f,getCamera().viewportHeight/2f);
-        body.linearDamping = 1.0f;
-        body.angularDamping = 4.0f;
-        Body wall = getWorld().createBody(body);
-        FixtureDef fdef = new FixtureDef();
-        fdef.restitution = 0.0f;
-        fdef.friction = 0.0f;
-        fdef.density = 100;
-        loader.attachFixture(wall,"CaptainCabin",fdef,1f);
-        wallModelOrigin = loader.getOrigin("Hero", PIXINMET).cpy();
+        wall = new WorldObject("NewWorld", "CaptainCabin", BodyDef.BodyType.StaticBody, 100, 0, 0, 1, 1, camera.viewportWidth/2f,camera.viewportHeight/2f);
+        createNewObj(wall);
     }
 }
