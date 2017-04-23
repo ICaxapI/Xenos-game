@@ -16,6 +16,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.exgames.xenos.actors.Detector;
+import com.exgames.xenos.actors.Door;
 import com.exgames.xenos.actors.Hero;
 import com.exgames.xenos.actors.WorldObject;
 
@@ -70,6 +72,7 @@ public class WorldBuilder implements Screen {
         heroVector = new Vector2(0,0);
         stage = new Stage(viewport);
         world = new com.badlogic.gdx.physics.box2d.World(new Vector2(0,0),true);
+        world.setContactListener(new MyContactListener());
         renderer = new Box2DDebugRenderer();
         renderer.setDrawBodies(true);
         renderer.setDrawContacts(true);
@@ -84,6 +87,7 @@ public class WorldBuilder implements Screen {
         texhero.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         hero = new Hero(texhero, "NewWorld", "Hero", 100);
         heroBody = createNewObj(hero, heroBody);
+        heroBody.setUserData(hero.getNameModel());
     }
 
     private Body createNewObj(WorldObject object, Body body){
@@ -93,12 +97,21 @@ public class WorldBuilder implements Screen {
         return body;
     }
 
+    protected void createDetector(Door door, Detector detector){
+        Body body = world.createBody(detector.getBody());
+        listBody.add(listBody.size(), body);
+        listObjects.add(listObjects.size(), detector);
+        detector.setRect(body);
+        body.setUserData(new UserData("detector", door));
+    }
+
     protected void createNewObj(WorldObject object){
         Body body = world.createBody(object.getBody());
         listBody.add(listBody.size(), body);
         listObjects.add(listObjects.size(), object);
         object.setRect(body);
         object.attFix();
+        body.setUserData(object.getNameModel());
     }
 
     public Camera getCamera(){
@@ -118,6 +131,9 @@ public class WorldBuilder implements Screen {
         updateGrad(this);
         batch.begin();
         hero.draw(batch);
+        for (int i = 0; i < listObjects.size(); i++) {
+            listObjects.get(i).draw(batch);
+        }
         batch.end();
         camera.position.set(heroBody.getWorldPoint(heroBody.getLocalCenter()),0);
         camera.update();

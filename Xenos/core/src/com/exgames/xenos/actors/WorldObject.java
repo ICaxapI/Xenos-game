@@ -9,8 +9,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.exgames.xenos.WorldBuilder;
+
+import static com.exgames.xenos.Main.camera;
 
 /**
  * Created by Alex on 18.04.2017.
@@ -53,6 +56,17 @@ public class WorldObject {
         this(world, nameModel, bodyType, density, linearDamping, angularDamping, restitution, friction);
         mySprite = new Sprite(texture);
         mySprite.setSize(sizeX, sizeY);
+        getBody().position.set(camera.viewportWidth/2f,camera.viewportHeight/2f);
+    }
+
+    public WorldObject(float radius, float x, float y){
+        body = new BodyDef();
+        body.type = BodyDef.BodyType.StaticBody;
+        FixtureDef fdef = new FixtureDef();
+        CircleShape circleShape = new CircleShape();
+        circleShape.setRadius(radius);
+        fdef.shape = circleShape;
+        getBody().position.set(x, y);
     }
 
 
@@ -69,6 +83,7 @@ public class WorldObject {
             mySprite.setOrigin(modelOrigin.x, modelOrigin.y);
             mySprite.setRotation(rect.getAngle() * MathUtils.radiansToDegrees);
         }
+        //System.out.println(rect.getUserData());
     }
     public void draw(Batch batch){
         draw(batch, 1f);
@@ -76,6 +91,9 @@ public class WorldObject {
 
     public BodyDef getBody(){
         return body;
+    }
+    public String getNameModel(){
+        return nameModel;
     }
     public Vector2 getModelOrigin(){
         return modelOrigin;

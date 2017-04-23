@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.exgames.xenos.JsonUtils;
 import com.exgames.xenos.WorldBuilder;
 import com.exgames.xenos.actors.Cloud;
+import com.exgames.xenos.actors.Detector;
+import com.exgames.xenos.actors.Door;
 import com.exgames.xenos.actors.WorldObject;
 
 import static com.exgames.xenos.Main.camera;
@@ -26,6 +28,7 @@ public class NewGame extends WorldBuilder {
     private Texture cloud;
     private Vector2 wallModelOrigin;
     private WorldObject wall;
+    private Door door;
 
     public NewGame(Game game, SpriteBatch batch, Viewport viewport) {
         super(game, batch, viewport);
@@ -57,7 +60,11 @@ public class NewGame extends WorldBuilder {
         cloud = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
         String string = "Ну такое.";
         Cloud cloudActor = new Cloud(cloud,20,40 , string, font, stage, 5,60, "resources/music/peek.wav");
-        wall = new WorldObject("NewWorld", "CaptainCabin", BodyDef.BodyType.StaticBody, 100, 0, 0, 1, 1, camera.viewportWidth/2f,camera.viewportHeight/2f);
+        wall = new WorldObject("NewWorld", "CaptainCabin", BodyDef.BodyType.StaticBody, 100, 0, 0, 0, 5, camera.viewportWidth/2f,camera.viewportHeight/2f);
         createNewObj(wall);
+        door = new Door("NewWorld", "Door", BodyDef.BodyType.KinematicBody, 100, 0, 0, 0, 0, camera.viewportWidth/2f,camera.viewportHeight/2f);
+        createNewObj(door);
+        Detector detector = new Detector(1, camera.viewportWidth/2f,camera.viewportHeight/2f);
+        createDetector(door, detector);
     }
 }
