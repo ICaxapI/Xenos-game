@@ -97,14 +97,13 @@ public class WorldBuilder implements Screen {
         return body;
     }
 
-    public void createDetector(Door door, Detector detector, boolean axisUpDown){
+    public void createDetector(Door door, Detector detector){
         Body body = world.createBody(detector.getBody());
         listBody.add(listBody.size(), body);
         listObjects.add(listObjects.size(), detector);
         detector.setRect(body);
         detector.attFix(body);
-        UserData userData =new UserData("Detector", door);
-        userData.setAxisUpDown(axisUpDown);
+        UserData userData = new UserData("Detector", door);
         body.setUserData(userData);
     }
 

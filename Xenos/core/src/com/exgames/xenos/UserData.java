@@ -8,7 +8,6 @@ import com.exgames.xenos.actors.Door;
 public class UserData {
     private String name;
     private Door door;
-    private boolean axisUpDown;
 
     public UserData(String name){
         this.name = name;
@@ -25,13 +24,5 @@ public class UserData {
 
     public String getName(){
         return name;
-    }
-
-    public boolean getAxis(){
-        return axisUpDown;
-    }
-
-    public void  setAxisUpDown(boolean axisUpDown){
-        this.axisUpDown = axisUpDown;
     }
 }

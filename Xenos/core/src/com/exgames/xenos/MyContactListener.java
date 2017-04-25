@@ -16,7 +16,14 @@ public class MyContactListener implements ContactListener {
 
     @Override
     public void endContact(Contact contact) {
-
+        UserData fixA = (UserData) contact.getFixtureA().getBody().getUserData();
+        UserData fixB = (UserData) contact.getFixtureB().getBody().getUserData();
+        if (fixA.getName().equals("Detector")){
+            fixA.getDoor().setHeroInside(false);
+        }
+        if (fixB.getName().equals("Detector")){
+            fixB.getDoor().setHeroInside(false);
+        }
     }
 
     @Override
@@ -25,25 +32,21 @@ public class MyContactListener implements ContactListener {
         UserData fixB = (UserData) contact.getFixtureB().getBody().getUserData();
         if ((fixA.getName().equals("Hero")&& fixB.getName().equals("Door"))|
                 (fixA.getName().equals("Door") && fixB.getName().equals("Hero"))){
-            contact.setEnabled(false);
         }
         if (fixA.getName().equals("Detector")){
             contact.setEnabled(false);
-            fixA.getDoor().swith(fixA.getAxis());
+            fixA.getDoor().swith();
+            fixA.getDoor().setHeroInside(true);
         }
         if (fixB.getName().equals("Detector")){
             contact.setEnabled(false);
-            fixB.getDoor().swith(fixB.getAxis());
+            fixB.getDoor().swith();
+            fixB.getDoor().setHeroInside(true);
         }
     }
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
-        UserData fixA = (UserData) contact.getFixtureA().getBody().getUserData();
-        UserData fixB = (UserData) contact.getFixtureB().getBody().getUserData();
-        if ((fixA.getName().equals("Hero")&& fixB.getName().equals("Door"))|
-                (fixA.getName().equals("Door") && fixB.getName().equals("Hero"))){
-            contact.setEnabled(false);
-        }
+
     }
 }

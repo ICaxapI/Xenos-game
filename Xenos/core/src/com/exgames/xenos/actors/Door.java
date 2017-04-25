@@ -24,28 +24,34 @@ public class Door extends  WorldObject {
     private int wait = 0;
     private boolean close = false;
     private boolean axisUpDown;
+    private boolean heroInside = false;
 
-    public Door(Texture texture, String world, String nameModel, BodyDef.BodyType bodyType, int density, float sizeX, float sizeY, float linearDamping, float angularDamping, float restitution, float friction, float x, float y) {
+    public Door(Texture texture, String world, String nameModel, BodyDef.BodyType bodyType, int density, float sizeX, float sizeY, float linearDamping, float angularDamping, float restitution, float friction, float x, float y, boolean axisUpDown) {
         super(texture, world, nameModel, bodyType, density, sizeX, sizeY, linearDamping, angularDamping, restitution, friction, x, y);
+        this.axisUpDown = axisUpDown;
     }
-    public Door(String world, String nameModel, BodyDef.BodyType bodyType, int density, float linearDamping, float angularDamping, float restitution, float friction, float x, float y) {
+    public Door(String world, String nameModel, BodyDef.BodyType bodyType, int density, float linearDamping, float angularDamping, float restitution, float friction, float x, float y, boolean axisUpDown) {
         super(world, nameModel, bodyType, density, linearDamping, angularDamping, restitution, friction, x, y);
+        this.axisUpDown = axisUpDown;
     }
 
     public void initVector(){
-        xStart = getRect().getWorldPoint(getRect().getLocalCenter()).x;
-        yStart = getRect().getWorldPoint(getRect().getLocalCenter()).y;
-        xFin = getRect().getWorldPoint(getRect().getLocalCenter()).x + 10;
-        yFin = getRect().getWorldPoint(getRect().getLocalCenter()).y + 10;
+        xStart = getRect().getWorldCenter().x;
+        yStart = getRect().getWorldCenter().y;
+        yFin = getRect().getWorldCenter().y;
+        xFin = getRect().getWorldCenter().x;
     }
 
-    public void swith(Boolean axisUpDown) {
-        this.axisUpDown = axisUpDown;
+    public void swith() {
         if (!active) {
             active = true;
-            getRect().setLinearVelocity(new Vector2(0, 4));
+            if (axisUpDown) {
+                yFin = getRect().getWorldCenter().y + 1;
+            } else {
+                xFin = getRect().getWorldCenter().x + 1;
+            }
             timerTask = new Door.MyTimerTask();
-            timer.scheduleAtFixedRate(timerTask, 250, 250);
+            timer.scheduleAtFixedRate(timerTask, 500, 500);
         }
     }
 
@@ -62,6 +68,9 @@ public class Door extends  WorldObject {
             mySprite.setRotation(getRect().getAngle() * MathUtils.radiansToDegrees);
         }
         //System.out.println(rect.getUserData());
+        if (active) {
+            updateVelocity();
+        }
     }
     public void draw(Batch batch){
         draw(batch, 1f);
@@ -69,7 +78,15 @@ public class Door extends  WorldObject {
 
     public void updateVelocity(){
         if (axisUpDown){
-
+            if (getRect().getWorldCenter().y != yFin) {
+                float needSpeed = (yFin - getRect().getWorldCenter().y) * 15;
+                getRect().setLinearVelocity(new Vector2(0, needSpeed));
+            }
+        } else {
+            if (getRect().getWorldCenter().x != xFin) {
+                float needSpeed = (xFin - getRect().getWorldCenter().x) * 15;
+                getRect().setLinearVelocity(new Vector2(needSpeed, 0));
+            }
         }
     }
 
@@ -79,30 +96,51 @@ public class Door extends  WorldObject {
         }
 
         public void run() {
-            if (close){
-                getRect().setLinearVelocity(new Vector2(0, 0));
-                stopTimer();
-                active = false;
-                open = false;
-                wait = 0;
-                close = false;
-                System.out.println("4");
-            }
-
-            if (!open){
-                open = true;
-                getRect().setLinearVelocity(new Vector2(0, 0));
-                System.out.println("1");
-            } else if (wait < 4){
-                wait++;
-                System.out.println("2");
+            if (axisUpDown) {
+                if (!open) {
+                    open = true;
+                    yFin = getRect().getWorldCenter().y;
+                } else if (wait < 2) {
+                    wait++;
+                } else if (close) {
+                    yFin = getRect().getWorldCenter().y;
+                    active = false;
+                    open = false;
+                    wait = 0;
+                    close = false;
+                    getRect().setLinearVelocity(new Vector2(0, 0));
+                    stopTimer();
+                } else if (heroInside) {
+                    System.out.println("HeroHere");
+                } else {
+                    yFin = yStart;
+                    close = true;
+                }
             } else {
-                getRect().setLinearVelocity(new Vector2(0, -4));
-                close = true;
-                System.out.println("3");
+                if (!open) {
+                    open = true;
+                    xFin = getRect().getWorldCenter().x;
+                } else if (wait < 2) {
+                    wait++;
+                } else if (close) {
+                    xFin = getRect().getWorldCenter().x;
+                    stopTimer();
+                    active = false;
+                    open = false;
+                    wait = 0;
+                    close = false;
+                } else if (heroInside) {
+                    System.out.println("HeroHere");
+                } else {
+                    xFin = xStart;
+                    close = true;
+                }
             }
-
         }
 
+    }
+
+    public void setHeroInside(boolean heroInside){
+        this.heroInside = heroInside;
     }
 }
