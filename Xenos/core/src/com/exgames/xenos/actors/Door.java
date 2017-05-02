@@ -55,7 +55,7 @@ public class Door extends  WorldObject {
         }
     }
 
-    public void stopTimer(){
+    private void stopTimer(){
         timerTask.cancel();
     }
 
@@ -76,15 +76,15 @@ public class Door extends  WorldObject {
         draw(batch, 1f);
     }
 
-    public void updateVelocity(){
+    private void updateVelocity(){
         if (axisUpDown){
             if (getRect().getWorldCenter().y != yFin) {
-                float needSpeed = (yFin - getRect().getWorldCenter().y) * 15;
+                float needSpeed = (yFin - getRect().getWorldCenter().y) * 10;
                 getRect().setLinearVelocity(new Vector2(0, needSpeed));
             }
         } else {
             if (getRect().getWorldCenter().x != xFin) {
-                float needSpeed = (xFin - getRect().getWorldCenter().x) * 15;
+                float needSpeed = (xFin - getRect().getWorldCenter().x) * 10;
                 getRect().setLinearVelocity(new Vector2(needSpeed, 0));
             }
         }
@@ -111,7 +111,7 @@ public class Door extends  WorldObject {
                     getRect().setLinearVelocity(new Vector2(0, 0));
                     stopTimer();
                 } else if (heroInside) {
-                    System.out.println("HeroHere");
+
                 } else {
                     yFin = yStart;
                     close = true;
@@ -130,7 +130,7 @@ public class Door extends  WorldObject {
                     wait = 0;
                     close = false;
                 } else if (heroInside) {
-                    System.out.println("HeroHere");
+
                 } else {
                     xFin = xStart;
                     close = true;

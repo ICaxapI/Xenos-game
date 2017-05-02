@@ -12,6 +12,6 @@
     "resources": [
         "/Xenos game/Xenos/core/assets"
     ],
-    "minimizejre": "hard",
-    "output": "binWindows"
+    "minimizejre": "light",
+    "output": "winbin"
 }

@@ -7,6 +7,9 @@ Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
+proguard5.3.3/
+launch4j/
+Xenos/winbin
 
 # Windows Installer files
 *.cab
@@ -15,7 +18,6 @@ $RECYCLE.BIN/
 *.msp
 
 # Windows shortcuts
-*.lnk
 
 # =========================
 # Operating System Files

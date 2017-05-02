@@ -1,6 +1,5 @@
 package com.exgames.xenos.desktop;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
@@ -39,6 +38,7 @@ public class DesktopLauncher {
 		config.vSyncEnabled = vSyncEn;
 		config.width = width;
 		config.height = height;
+		config.title = "Xenos";
 		Main main = new Main();
 		Main.setSettings(skiplogo, volumeMusic, volumeSound);
 		new LwjglApplication(main, config);
@@ -52,7 +52,6 @@ public class DesktopLauncher {
 	private static void checkSettings(){
 		if (files.external("Saved Games/Xenos").isDirectory()){
 			if (files.external("Saved Games/Xenos/settings.json").exists()){
-				System.out.println("Найден файл с настройками.");
 				String jsonInput = files.external("Saved Games/Xenos/settings.json").readString();
 				try {
 					JSONObject settingsJsonObject = (JSONObject) JSONValue.parseWithException(jsonInput);
@@ -63,7 +62,6 @@ public class DesktopLauncher {
 					height = Integer.parseInt(settingsJsonObject.get("height").toString());
 					volumeMusic = Float.parseFloat(settingsJsonObject.get("volumeMusic").toString());
 					volumeSound = Float.parseFloat(settingsJsonObject.get("volumeSound").toString());
-					System.out.println("Настройки загруженны.");
 				} catch (ParseException ex){
 					Logger.getLogger(DesktopLauncher.class.getName()).log(Level.SEVERE, null, ex);
 					ex.printStackTrace();
