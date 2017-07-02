@@ -73,6 +73,9 @@ public class WorldObject {
     public void attFix(){
         loader.attachFixture(rect,nameModel,fdef,1f);
     }
+    public void attFix(float scale){
+        loader.attachFixture(rect,nameModel,fdef,scale);
+    }
     public void attFix(Body body){
         body.createFixture(fdef);
     }

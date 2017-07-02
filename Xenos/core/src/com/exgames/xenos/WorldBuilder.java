@@ -115,6 +115,14 @@ public class WorldBuilder implements Screen {
         object.attFix();
         body.setUserData(new UserData(object.getNameModel()));
     }
+    protected void createNewObj(WorldObject object, float sizex, float sizey){
+        Body body = world.createBody(object.getBody());
+        listBody.add(listBody.size(), body);
+        listObjects.add(listObjects.size(), object);
+        object.setRect(body);
+        object.attFix(sizex);
+        body.setUserData(new UserData(object.getNameModel()));
+    }
 
     public Camera getCamera(){
         return this.camera;
@@ -132,10 +140,10 @@ public class WorldBuilder implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         updateGrad(this);
         batch.begin();
-        hero.draw(batch);
         for (int i = 0; i < listObjects.size(); i++) {
             listObjects.get(i).draw(batch);
         }
+        hero.draw(batch);
         batch.end();
         camera.position.set(heroBody.getWorldPoint(heroBody.getLocalCenter()),0);
         camera.update();

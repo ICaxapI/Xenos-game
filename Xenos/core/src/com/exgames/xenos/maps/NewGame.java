@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.PerformanceCounter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.exgames.xenos.JsonUtils;
 import com.exgames.xenos.WorldBuilder;
+import com.exgames.xenos.actors.Cloud;
 import com.exgames.xenos.actors.Detector;
 import com.exgames.xenos.actors.Door;
 import com.exgames.xenos.actors.WorldObject;
@@ -25,6 +26,7 @@ import static com.exgames.xenos.Main.camera;
 public class NewGame extends WorldBuilder {
     private BitmapFont font;
     private Texture cloud;
+    private Texture ship;
     private Vector2 wallModelOrigin;
     private WorldObject wall;
     private Door door;
@@ -46,6 +48,8 @@ public class NewGame extends WorldBuilder {
         font.getData().scale(0.005f);
         generator.dispose();
 
+        ship = new Texture(Gdx.files.internal("resources/texture/ship.png"));
+
         PerformanceCounter kek = new PerformanceCounter("kek");
         PerformanceCounter kek2 = new PerformanceCounter("kek2");
         kek.start();
@@ -65,12 +69,13 @@ public class NewGame extends WorldBuilder {
                 "преимущественно господа и иногда дамы, и господа, которые преимущественно\n" +
                 "дамы и иногда господа. И то господа, то дамы. Господа, которые пришли в\n" +
                 "костюмах дам, дамы, которые пришли в костюме господ. Те, кто пока не\n" +
-                "определился. Господствующие дамы и дамствующие господа. Ламы и газвода.     \n" +
+                "определился. Господствующие дамы и дамствующие господа. Ламы и газвода.\n" +
                 "...\n" +
                 "Я забыл, зачем мы собрались.";
-       // Cloud cloudActor = new Cloud(cloud,20,40 , string, font, stage, 5,60, "resources/music/peek.wav");
-        wall = new WorldObject("NewWorld", "CaptainCabin", BodyDef.BodyType.StaticBody, 100, 0, 0, 0, 5, camera.viewportWidth/2f,camera.viewportHeight/2f);
-        createNewObj(wall);
+        //Cloud cloudActor = new Cloud(cloud,20,40 , string, font, stage, 5,60, "resources/music/peek.wav");
+        wall = new WorldObject(ship, "NewWorld", "Ship", BodyDef.BodyType.StaticBody, 100,
+                31.8f/2f, 43.1f/2f, 0, 0, 0, 1);
+        createNewObj(wall, 31.8f/2f, 43.1f/2f);
         door = new Door("NewWorld", "Door", BodyDef.BodyType.KinematicBody, 100, 0, 0, 0, 0, camera.viewportWidth/2f-2.125f,camera.viewportHeight/2f-0.5f, true);
         createNewObj(door);
         Detector detector = new Detector(0.5f, door.getRect().getWorldPoint(door.getRect().getLocalCenter()).x,camera.viewportHeight/2f-0.5f);
