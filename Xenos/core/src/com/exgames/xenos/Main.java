@@ -9,6 +9,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import static com.badlogic.gdx.graphics.GL20.GL_ONE;
+import static com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA;
+
 public class Main extends Game {
     public static boolean skipLogo = false;
     public static Menu menu;
@@ -21,6 +24,7 @@ public class Main extends Game {
 
 	@Override
 	public void create () {
+        Gdx.gl.glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         batch = new SpriteBatch();
         camera = new OrthographicCamera(1280,720);
         camera.position.set(new Vector3(camera.viewportWidth/2,camera.viewportHeight/2,0));

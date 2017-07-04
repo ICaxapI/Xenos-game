@@ -102,7 +102,7 @@ public class NewGame extends WorldBuilder {
             wall.getFixture(i).setFilterData(filterWall);
         }
 
-        PointLight herolight = new PointLight(handler, 100, Color.WHITE, 7.5f, 0,0);
+        PointLight herolight = new PointLight(handler, 100, Color.WHITE, 5f, 0,0);
         herolight.attachToBody(getHeroBody(), 0.315f, 0.43f);
         herolight.setSoft(false);
         herolight.setIgnoreAttachedBody(true);

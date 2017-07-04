@@ -21,9 +21,13 @@ import com.exgames.xenos.actors.Detector;
 import com.exgames.xenos.actors.Door;
 import com.exgames.xenos.actors.Hero;
 import com.exgames.xenos.actors.WorldObject;
+import com.badlogic.gdx.Gdx;
 
 import java.util.ArrayList;
 
+import static com.badlogic.gdx.graphics.GL20.GL_ONE;
+import static com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA;
+import static com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA;
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
 
@@ -112,7 +116,7 @@ public class WorldBuilder implements Screen {
         handler = new RayHandler(world);
         RayHandler.setGammaCorrection(true);
         handler.setBlur(true);
-        handler.setBlurNum(50);
+        handler.setBlurNum(5);
         handler.setAmbientLight(0.1f);
         handler.setCulling(false);
     }
