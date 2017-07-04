@@ -30,9 +30,6 @@ public class MyContactListener implements ContactListener {
     public void preSolve(Contact contact, Manifold oldManifold) {
         UserData fixA = (UserData) contact.getFixtureA().getBody().getUserData();
         UserData fixB = (UserData) contact.getFixtureB().getBody().getUserData();
-        if ((fixA.getName().equals("Hero")&& fixB.getName().equals("Door"))|
-                (fixA.getName().equals("Door") && fixB.getName().equals("Hero"))){
-        }
         if (fixA.getName().equals("Detector")){
             contact.setEnabled(false);
             fixA.getDoor().swith();

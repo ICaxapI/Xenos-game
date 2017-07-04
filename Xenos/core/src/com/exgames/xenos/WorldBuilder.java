@@ -1,18 +1,19 @@
 package com.exgames.xenos;
 
 import aurelienribon.bodyeditor.BodyEditorLoader;
+import box2dLight.BlendFunc;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -31,6 +32,17 @@ import static java.lang.Math.atan2;
  * Created by Alex on 09.04.2017.
  */
 public class WorldBuilder implements Screen {
+    final public static short CATEGORY_SENSOR = 0x0001;
+    final public static short CATEGORY_PLAYER = 0x0002;
+    final public static short CATEGORY_WALL = 0x0004;
+    final public static short CATEGORY_LIGHT = 0x0008;
+    final public static short CATEGORY_OBJECTS = 0x0016;
+    final public static short MASK_SENSOR = CATEGORY_PLAYER | CATEGORY_OBJECTS;
+    final public static short MASK_PLAYER = -1;
+    final public static short MASK_WALL = CATEGORY_LIGHT | CATEGORY_PLAYER | CATEGORY_OBJECTS;
+    final public static short MASK_LIGHT = CATEGORY_WALL | CATEGORY_OBJECTS | CATEGORY_PLAYER;
+    final public static short MASK_OBJECTS = -1;
+
     public static final float PIXINMET = 1f/23f;
     private static Camera camera;
     private Vector2 heroModelOrigin;
@@ -55,6 +67,8 @@ public class WorldBuilder implements Screen {
     private Vector2 heroVector;
     protected static ArrayList<Body> listBody = new ArrayList<>();
     protected static ArrayList<WorldObject> listObjects = new ArrayList<>();
+
+    public RayHandler handler;
 
 
     private float gradneed;
@@ -88,6 +102,19 @@ public class WorldBuilder implements Screen {
         hero = new Hero(texhero, "NewWorld", "Hero", 100);
         heroBody = createNewObj(hero, heroBody);
         heroBody.setUserData(new UserData(hero.getNameModel()));
+        Filter filterHero = new Filter();
+        filterHero.categoryBits = CATEGORY_PLAYER;
+        filterHero.maskBits = MASK_PLAYER;
+        for (int i = 0; i < hero.getFixtureLastIndex(); i++){
+            hero.getFixture(i).setFilterData(filterHero);
+        }
+
+        handler = new RayHandler(world);
+        RayHandler.setGammaCorrection(true);
+        handler.setBlur(true);
+        handler.setBlurNum(50);
+        handler.setAmbientLight(0.1f);
+        handler.setCulling(false);
     }
 
     private Body createNewObj(WorldObject object, Body body){
@@ -147,7 +174,9 @@ public class WorldBuilder implements Screen {
         batch.end();
         camera.position.set(heroBody.getWorldPoint(heroBody.getLocalCenter()),0);
         camera.update();
-        renderer.render(world,camera.combined);
+        handler.setCombinedMatrix((OrthographicCamera) camera);
+        handler.updateAndRender();
+        //renderer.render(world,camera.combined);
         world.step(1/fps,5,5);
         batch.setProjectionMatrix(camera.combined);
         stage.act(delta);

@@ -1,13 +1,16 @@
 package com.exgames.xenos.maps;
 
+import box2dLight.PointLight;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.utils.PerformanceCounter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.exgames.xenos.JsonUtils;
@@ -74,12 +77,40 @@ public class NewGame extends WorldBuilder {
                 "Я забыл, зачем мы собрались.";
         //Cloud cloudActor = new Cloud(cloud,20,40 , string, font, stage, 5,60, "resources/music/peek.wav");
         wall = new WorldObject(ship, "NewWorld", "Ship", BodyDef.BodyType.StaticBody, 100,
-                31.8f/2f, 43.1f/2f, 0, 0, 0, 1);
-        createNewObj(wall, 31.8f/2f, 43.1f/2f);
+                15.9f, 21.55f, 0, 0, 0, 1);
+        createNewObj(wall, 15.9f, 21.55f);
         door = new Door("NewWorld", "Door", BodyDef.BodyType.KinematicBody, 100, 0, 0, 0, 0, camera.viewportWidth/2f-2.125f,camera.viewportHeight/2f-0.5f, true);
         createNewObj(door);
         Detector detector = new Detector(0.5f, door.getRect().getWorldPoint(door.getRect().getLocalCenter()).x,camera.viewportHeight/2f-0.5f);
         createDetector(door, detector);
         door.initVector();
+
+        Filter filterSens = new Filter();
+        filterSens.categoryBits = CATEGORY_SENSOR;
+        filterSens.maskBits = MASK_SENSOR;
+        detector.getFixture().setFilterData(filterSens);
+
+        Filter filterDoor = new Filter();
+        filterDoor.categoryBits = CATEGORY_OBJECTS;
+        filterDoor.maskBits = MASK_OBJECTS;
+        door.getFixture().setFilterData(filterDoor);
+
+        Filter filterWall = new Filter();
+        filterWall.categoryBits = CATEGORY_WALL;
+        filterWall.maskBits = MASK_WALL;
+        for (int i = 0; i < wall.getFixtureLastIndex(); i++){
+            wall.getFixture(i).setFilterData(filterWall);
+        }
+
+        PointLight herolight = new PointLight(handler, 100, Color.WHITE, 7.5f, 0,0);
+        herolight.attachToBody(getHeroBody(), 0.315f, 0.43f);
+        herolight.setSoft(false);
+        herolight.setIgnoreAttachedBody(true);
+        herolight.setSoftnessLength(0f);
+
+        Filter filterLight = new Filter();
+        filterLight.categoryBits = CATEGORY_LIGHT;
+        filterLight.maskBits = MASK_LIGHT;
+        herolight.setContactFilter(filterLight);
     }
 }

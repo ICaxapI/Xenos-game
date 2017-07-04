@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.*;
 import com.exgames.xenos.WorldBuilder;
 
 import static com.exgames.xenos.Main.camera;
@@ -80,6 +77,20 @@ public class WorldObject {
         body.createFixture(fdef);
     }
 
+    public FixtureDef getFdef() {
+        return fdef;
+    }
+
+    public Fixture getFixture() {
+        return getRect().getFixtureList().first();
+    }
+
+    public Fixture getFixture(int index) {
+        return getRect().getFixtureList().get(index);
+    }
+    public int getFixtureLastIndex() {
+        return getRect().getFixtureList().size;
+    }
 
     public void draw(Batch batch, float alpha){
         if (mySprite != null) {
