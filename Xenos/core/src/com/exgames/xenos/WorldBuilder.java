@@ -116,7 +116,7 @@ public class WorldBuilder implements Screen {
         handler = new RayHandler(world);
         RayHandler.setGammaCorrection(true);
         handler.setBlur(true);
-        handler.setBlurNum(5);
+        handler.setBlurNum(10);
         handler.setAmbientLight(0.1f);
         handler.setCulling(false);
     }
