@@ -6,6 +6,7 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -85,6 +86,8 @@ public class WorldBuilder implements Screen {
 
     @Override
     public void show() {
+        InputMultiplexer multiplexer = new InputMultiplexer();
+
         heroVector = new Vector2(0,0);
         stage = new Stage(viewport);
         world = new com.badlogic.gdx.physics.box2d.World(new Vector2(0,0),true);
@@ -96,7 +99,6 @@ public class WorldBuilder implements Screen {
         renderer.setDrawJoints(true);
         renderer.setDrawVelocities(true);
         inputController = new InputController(this);
-        Gdx.input.setInputProcessor(inputController);
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
         texhero = new Texture(Gdx.files.internal("resources/texture/hero2.png"));
@@ -115,6 +117,15 @@ public class WorldBuilder implements Screen {
         handler.setLightMapRendering(true);
         handler.setShadows(true);
         handler.resizeFBO(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+
+        hero.addInputListener();
+        stage.addActor(hero);
+        hero.setAnglex(31);
+        hero.setAngley(43);
+        System.out.println("Добавили актёр в Stage");
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(inputController);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     private Body createNewObj(WorldObject object, Body body, short category, short mask){
@@ -293,6 +304,9 @@ public class WorldBuilder implements Screen {
     }
     public float getCentery(){
         return centery;
+    }
+    public Stage getStage(){
+        return stage;
     }
 
     @Override
