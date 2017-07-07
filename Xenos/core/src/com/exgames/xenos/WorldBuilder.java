@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -21,13 +22,10 @@ import com.exgames.xenos.actors.Detector;
 import com.exgames.xenos.actors.Door;
 import com.exgames.xenos.actors.Hero;
 import com.exgames.xenos.actors.WorldObject;
-import com.badlogic.gdx.Gdx;
+import shaders.DiffuseShader;
 
 import java.util.ArrayList;
 
-import static com.badlogic.gdx.graphics.GL20.GL_ONE;
-import static com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA;
-import static com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA;
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
 
@@ -104,31 +102,35 @@ public class WorldBuilder implements Screen {
         texhero = new Texture(Gdx.files.internal("resources/texture/hero2.png"));
         texhero.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         hero = new Hero(texhero, "NewWorld", "Hero", 100);
-        heroBody = createNewObj(hero, heroBody);
+        heroBody = createNewObj(hero, heroBody, CATEGORY_PLAYER, MASK_PLAYER);
         heroBody.setUserData(new UserData(hero.getNameModel()));
-        Filter filterHero = new Filter();
-        filterHero.categoryBits = CATEGORY_PLAYER;
-        filterHero.maskBits = MASK_PLAYER;
-        for (int i = 0; i < hero.getFixtureLastIndex(); i++){
-            hero.getFixture(i).setFilterData(filterHero);
-        }
 
-        handler = new RayHandler(world);
         RayHandler.setGammaCorrection(true);
+        handler = new RayHandler(world);
+        handler.setLightShader(Shader.createShader());
+        handler.setAmbientLight(0.85f);
         handler.setBlur(true);
-        handler.setBlurNum(10);
-        handler.setAmbientLight(0.1f);
-        handler.setCulling(false);
+        handler.setBlurNum(5);
+        handler.setCulling(true);
+        handler.setLightMapRendering(true);
+        handler.setShadows(true);
+        handler.resizeFBO(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
     }
 
-    private Body createNewObj(WorldObject object, Body body){
+    private Body createNewObj(WorldObject object, Body body, short category, short mask){
         body = world.createBody(object.getBody());
         object.setRect(body);
         object.attFix();
+        Filter filter = new Filter();
+        filter.categoryBits = category;
+        filter.maskBits = mask;
+        for (int i = 0; i < object.getFixtureLastIndex(); i++){
+            object.getFixture(i).setFilterData(filter);
+        }
         return body;
     }
 
-    public void createDetector(Door door, Detector detector){
+    public void createDetector(Door door, Detector detector, short category, short mask){
         Body body = world.createBody(detector.getBody());
         listBody.add(listBody.size(), body);
         listObjects.add(listObjects.size(), detector);
@@ -136,23 +138,41 @@ public class WorldBuilder implements Screen {
         detector.attFix(body);
         UserData userData = new UserData("Detector", door);
         body.setUserData(userData);
+        Filter filter = new Filter();
+        filter.categoryBits = category;
+        filter.maskBits = mask;
+        for (int i = 0; i < detector.getFixtureLastIndex(); i++){
+            detector.getFixture(i).setFilterData(filter);
+        }
     }
 
-    protected void createNewObj(WorldObject object){
+    protected void createNewObj(WorldObject object, short category, short mask){
         Body body = world.createBody(object.getBody());
         listBody.add(listBody.size(), body);
         listObjects.add(listObjects.size(), object);
         object.setRect(body);
         object.attFix();
         body.setUserData(new UserData(object.getNameModel()));
+        Filter filter = new Filter();
+        filter.categoryBits = category;
+        filter.maskBits = mask;
+        for (int i = 0; i < object.getFixtureLastIndex(); i++){
+            object.getFixture(i).setFilterData(filter);
+        }
     }
-    protected void createNewObj(WorldObject object, float sizex, float sizey){
+    protected void createNewObj(WorldObject object, float sizex, float sizey, short category, short mask){
         Body body = world.createBody(object.getBody());
         listBody.add(listBody.size(), body);
         listObjects.add(listObjects.size(), object);
         object.setRect(body);
         object.attFix(sizex);
         body.setUserData(new UserData(object.getNameModel()));
+        Filter filter = new Filter();
+        filter.categoryBits = category;
+        filter.maskBits = mask;
+        for (int i = 0; i < object.getFixtureLastIndex(); i++){
+            object.getFixture(i).setFilterData(filter);
+        }
     }
 
     public Camera getCamera(){
@@ -170,6 +190,8 @@ public class WorldBuilder implements Screen {
         Gdx.gl.glClearColor(0.5f,0.5f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         updateGrad(this);
+        world.step(1/fps,5,5);
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
         for (int i = 0; i < listObjects.size(); i++) {
             listObjects.get(i).draw(batch);
@@ -181,8 +203,6 @@ public class WorldBuilder implements Screen {
         handler.setCombinedMatrix((OrthographicCamera) camera);
         handler.updateAndRender();
         //renderer.render(world,camera.combined);
-        world.step(1/fps,5,5);
-        batch.setProjectionMatrix(camera.combined);
         stage.act(delta);
         stage.draw();
         updateHeroInput();
@@ -299,6 +319,6 @@ public class WorldBuilder implements Screen {
 
     @Override
     public void dispose() {
-
+        handler.dispose();
     }
 }

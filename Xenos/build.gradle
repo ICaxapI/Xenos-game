@@ -21,7 +21,7 @@ allprojects {
         appName = "Xenos"
         gdxVersion = '1.9.6'
         roboVMVersion = '2.3.0'
-        box2DLightsVersion = '1.4'
+        box2DLightsVersion = '1.5-SNAPSHOT'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
     }
