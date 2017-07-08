@@ -8,6 +8,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -53,7 +54,7 @@ public class WorldBuilder implements Screen {
     private static boolean keyboardUpdate = false;
     private BodyEditorLoader loader;
     private Texture texhero;
-    private Hero hero;
+    private static Hero hero;
     private Game game;
     private SpriteBatch batch;
     private Viewport viewport;
@@ -70,6 +71,7 @@ public class WorldBuilder implements Screen {
     private Vector2 heroVector;
     protected static ArrayList<Body> listBody = new ArrayList<>();
     protected static ArrayList<WorldObject> listObjects = new ArrayList<>();
+    public static Music music;
 
     public RayHandler handler;
 
@@ -118,10 +120,10 @@ public class WorldBuilder implements Screen {
         handler.setShadows(true);
         handler.resizeFBO(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 
-        hero.addInputListener("Hero");
-        stage.addActor(hero);
-        hero.setAnglex(31);
-        hero.setAngley(43);
+//        hero.addInputListener("Hero");
+//        stage.addActor(hero);
+//        hero.setAnglex(31); смещение до центра, если в физ модели отчёт начинается не с 0;0
+//        hero.setAngley(43);
 
 
 
@@ -301,11 +303,14 @@ public class WorldBuilder implements Screen {
     public Body getHeroBody(){
         return heroBody;
     }
-    public float getCenterx(){
+    public static float getCenterx(){
         return centerx;
     }
-    public float getCentery(){
+    public static float getCentery(){
         return centery;
+    }
+    public static Hero getHero(){
+        return hero;
     }
     public Stage getStage(){
         return stage;

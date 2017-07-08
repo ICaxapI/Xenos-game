@@ -2,9 +2,12 @@ package com.exgames.xenos.actors;
 
 import aurelienribon.bodyeditor.BodyEditorLoader;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -12,7 +15,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.exgames.xenos.JsonUtils;
+import com.exgames.xenos.Main;
 import com.exgames.xenos.WorldBuilder;
+import com.exgames.xenos.maps.NewGame;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import static com.exgames.xenos.Main.camera;
 
@@ -30,6 +38,11 @@ public class WorldObject extends Actor{
     private FixtureDef fdef;
     private int anglex;
     private int angley;
+    private JSONArray myArray;
+    private int iter = 0;
+    private Texture cloud;
+    private BitmapFont font;
+    private String soundPatch = "resources/music/peek.wav";
 
     private WorldObject(String world, String nameModel, BodyDef.BodyType bodyType, int density, float linearDamping,
                        float angularDamping, float restitution, float friction){
@@ -74,7 +87,13 @@ public class WorldObject extends Actor{
     }
 
 
-    public void addInputListener(String name){
+    private void addInputListener(String name){
+        cloud = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
+        try {
+            myArray  = JsonUtils.parseObj(name);
+        } catch (NullPointerException ex){
+            ex.printStackTrace();
+        }
         listener = new InputListener(){
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -138,6 +157,66 @@ public class WorldObject extends Actor{
         };
         addListener(listener);
     }
+    public void addInputListener(String name, String patchFont, int size, float scale) {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(patchFont));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = size;
+        parameter.minFilter = Texture.TextureFilter.Nearest;
+        parameter.magFilter = Texture.TextureFilter.Linear;
+        parameter.characters = WorldBuilder.FONT_CHARACTERS;
+        parameter.renderCount = 1;
+        font = generator.generateFont(parameter);
+        font.getData().scale(scale);
+        generator.dispose();
+        addInputListener(name);
+    }
+    public void addInputListener(String name, BitmapFont font){
+        this.font = font;
+        addInputListener(name);
+    }
+
+    public void click(){
+        JSONObject object;
+        object = (JSONObject) myArray.get(0);
+        if (object.get("type").equals("monolog")){
+            iter++;
+            JSONArray replicsArr = (JSONArray) object.get("replics");
+            JSONObject replics = (JSONObject) replicsArr.get(0);
+            if(!replics.containsKey("action" + iter)) {
+                //Vector2 pos = WorldBuilder.getHero().getRect().getPosition().sub(WorldBuilder.getHero().getModelOrigin());
+                if(replics.containsKey(iter)) {
+                    Cloud cloudActor = new Cloud(cloud, WorldBuilder.getCenterx(), WorldBuilder.getCentery(), replics.get(iter).toString(), font, getStage(), 5, 60, soundPatch);
+                } else {
+                    iter --;
+                    Cloud cloudActor = new Cloud(cloud, WorldBuilder.getCenterx(), WorldBuilder.getCentery(), replics.get(iter).toString(), font, getStage(), 5, 60, soundPatch);
+                }
+            } else {
+                JSONArray actionArray = (JSONArray) replics.get("action" + iter);
+                JSONObject action = (JSONObject) actionArray.get(0);
+                if (action.get("action").equals("playmusic")){
+                    WorldBuilder.music.pause();
+                    Music actionmusic;
+                    actionmusic = Gdx.audio.newMusic(Gdx.files.internal("resources/music/" + action.get("actionInfo")));
+                    actionmusic.setVolume(Main.volumeMusic);
+                    if (!actionmusic.isPlaying()){
+                        actionmusic.play();
+                    }
+                    Music.OnCompletionListener listenerMusic = music -> {
+                        WorldBuilder.music.play();
+                        if (actionmusic.isPlaying()){
+                            actionmusic.stop();
+                        }
+                        actionmusic.dispose();
+                    };
+                    actionmusic.setOnCompletionListener(listenerMusic);
+                }
+                if (action.containsKey("replic")){
+                    Cloud cloudActor = new Cloud(cloud, WorldBuilder.getCenterx(), WorldBuilder.getCentery(), action.get("replic").toString(), font, getStage(), 5, 60, soundPatch);
+                }
+            }
+        }
+    }
+
     public void attFix(){
         loader.attachFixture(rect,nameModel,fdef,1f);
     }
@@ -214,5 +293,13 @@ public class WorldObject extends Actor{
 
     public void setAngley(int angley) {
         this.angley = angley;
+    }
+
+    public void setCloud(Texture cloud) {
+        this.cloud = cloud;
+    }
+
+    public void setSoundPatch(String soundPatch) {
+        this.soundPatch = soundPatch;
     }
 }
