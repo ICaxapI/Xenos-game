@@ -61,7 +61,6 @@ public class WorldObject extends Actor{
         mySprite = new Sprite(texture);
         mySprite.setSize(sizeX, sizeY);
         getBody().position.set(camera.viewportWidth/2f,camera.viewportHeight/2f);
-        System.out.println("Тот конструктор");
     }
 
     public WorldObject(float radius, float x, float y){
@@ -75,7 +74,7 @@ public class WorldObject extends Actor{
     }
 
 
-    public void addInputListener(){
+    public void addInputListener(String name){
         listener = new InputListener(){
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {

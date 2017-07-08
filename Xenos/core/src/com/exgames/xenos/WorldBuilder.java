@@ -118,11 +118,13 @@ public class WorldBuilder implements Screen {
         handler.setShadows(true);
         handler.resizeFBO(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 
-        hero.addInputListener();
+        hero.addInputListener("Hero");
         stage.addActor(hero);
         hero.setAnglex(31);
         hero.setAngley(43);
-        System.out.println("Добавили актёр в Stage");
+
+
+
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(inputController);
         Gdx.input.setInputProcessor(multiplexer);
