@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -21,6 +22,8 @@ import com.exgames.xenos.WorldBuilder;
 import com.exgames.xenos.maps.NewGame;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.util.Objects;
 
 import static com.exgames.xenos.Main.camera;
 
@@ -38,11 +41,15 @@ public class WorldObject extends Actor{
     private FixtureDef fdef;
     private int anglex;
     private int angley;
-    private JSONArray myArray;
+    private JSONObject myObject;
     private int iter = 0;
-    private Texture cloud;
+    private Texture cloudTex;
     private BitmapFont font;
     private String soundPatch = "resources/music/peek.wav";
+    private String stateDialog = "v1";//сохранять и применять сюда из файла сохранения
+    private Cloud cloudActor;
+    private boolean movedCloud = false;
+    private Dialog dialogCloud;
 
     private WorldObject(String world, String nameModel, BodyDef.BodyType bodyType, int density, float linearDamping,
                        float angularDamping, float restitution, float friction){
@@ -58,22 +65,18 @@ public class WorldObject extends Actor{
         fdef.density = density;
         modelOrigin = loader.getOrigin(nameModel, WorldBuilder.PIXINMET).cpy();
     }
-    public WorldObject(Texture texture, String world, String nameModel, BodyDef.BodyType bodyType, int density,
-                       float sizeX, float sizeY, float linearDamping, float angularDamping, float restitution, float friction,float x, float y){
-        this(texture, world, nameModel, bodyType, density, sizeX, sizeY, linearDamping, angularDamping, restitution, friction);
-        getBody().position.set(x , y);
-    }
     public WorldObject(String world, String nameModel, BodyDef.BodyType bodyType, int density, float linearDamping,
                        float angularDamping, float restitution, float friction, float x, float y){
         this(world, nameModel, bodyType, density, linearDamping, angularDamping, restitution, friction);
         getBody().position.set(x , y);
     }
     public WorldObject(Texture texture, String world, String nameModel, BodyDef.BodyType bodyType, int density,
-                       float sizeX, float sizeY, float linearDamping, float angularDamping, float restitution, float friction){
+                       float sizeX, float sizeY, float linearDamping, float angularDamping, float restitution, float friction, float x, float y){
         this(world, nameModel, bodyType, density, linearDamping, angularDamping, restitution, friction);
         mySprite = new Sprite(texture);
         mySprite.setSize(sizeX, sizeY);
-        getBody().position.set(camera.viewportWidth/2f,camera.viewportHeight/2f);
+        body.fixedRotation = true;
+        getBody().position.set(x, y);
     }
 
     public WorldObject(float radius, float x, float y){
@@ -86,11 +89,167 @@ public class WorldObject extends Actor{
         body.position.set(x, y);
     }
 
+    private Vector2 getCordsScreen(){
+        Vector2 heroWorld = WorldBuilder.getHero().getRect().getWorldCenter();
+        Vector2 objWorld = getRect().getPosition().sub(getModelOrigin());
+        float alignx = (objWorld.x - heroWorld.x)*(getStage().getWidth()/16f);
+        float aligny = (objWorld.y - heroWorld.y)*(getStage().getHeight()/9f);
+        Vector2 objStage = new Vector2(getStage().getWidth()/2f + alignx,  getStage().getHeight()/2f + aligny);
+        return objStage;
+    }
 
-    private void addInputListener(String name){
-        cloud = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
+    public void removeCloud(){
+        if(cloudActor != null) {
+            cloudActor.dispose();
+            cloudActor = null;
+        }
+    }
+
+    public void removeDialog(){
+        if(dialogCloud != null) {
+            dialogCloud.dispose();
+            dialogCloud = null;
+        }
+    }
+
+    public void loadReplic(){
+        if (myObject.get("type").equals("monolog")){
+            if (cloudActor != null){
+                removeCloud();
+            }
+            iter++;
+            JSONArray replicsArr = (JSONArray) myObject.get("replics");
+            JSONObject replics = (JSONObject) replicsArr.get(0);
+            if(!replics.containsKey("action" + iter)) {
+                //Vector2 pos = WorldBuilder.getHero().getRect().getPosition().sub(WorldBuilder.getHero().getModelOrigin());
+                if(replics.containsKey(String.valueOf(iter))) {
+                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 60, soundPatch, this);
+                } else {
+                    iter --;
+                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 60, soundPatch, this);
+                }
+            } else {
+                JSONObject action = (JSONObject) replics.get("action" + iter);
+                if (action.get("action").equals("playmusic")){
+                    playMusic(action);
+                } else if (action.get("action").equals("changestate")){
+                    stateDialog = action.get("actionInfo").toString();
+                }
+                if (action.containsKey("replic")){
+                    callCloud(cloudTex, (getStage().getWidth()/2f), (getStage().getHeight()/2f), action.get("replic").toString(), font, getStage(), 2, 60, soundPatch, this);
+                }
+            }
+        } else if (myObject.get("type").equals("dialog")){
+            movedCloud = true;
+            JSONArray replicsArr = (JSONArray) myObject.get("replics");
+            JSONObject replics = (JSONObject) replicsArr.get(0);
+            JSONArray dialogArr = (JSONArray) myObject.get("dialog");
+            JSONObject dialog = (JSONObject) dialogArr.get(0);
+            if (dialog.containsKey(stateDialog)){
+                JSONObject nowDialog = (JSONObject) dialog.get(stateDialog);
+                if (nowDialog.containsKey("start")){
+                    if (cloudActor == null) {
+                        if(!replics.containsKey("action" + nowDialog.get("start"))) {
+                            callCloud(cloudTex, getX(), getY(), replics.get(nowDialog.get("start")).toString(), font, getStage(), 2, 60, soundPatch, this);
+                        } else {
+                            JSONObject action = (JSONObject) replics.get("action" + nowDialog.get("start"));
+                            if (action.get("action").equals("playmusic")){
+                                playMusic(action);
+                            } else if (action.get("action").equals("changestate")){
+                                stateDialog = action.get("actionInfo").toString();
+                            }
+                            if (action.containsKey("replic")){
+                                callCloud(cloudTex, (getStage().getWidth()/2f), (getStage().getHeight()/2f), action.get("replic").toString(), font, getStage(), 2, 60, soundPatch, this);
+                            }
+                        }
+                    }
+                } else {
+                    System.out.println("Исключение: Нет ключа start!");
+                }
+                if (nowDialog.containsKey("interupted1")){
+
+                } else if (nowDialog.containsKey("ansvers") || nowDialog.containsKey("exit")){
+                    String[] ansvers;
+                    String[] ansversID;
+                    String[] exit;
+                    String[] exitID;
+                    if (nowDialog.containsKey("ansvers")) {
+                        JSONArray ansverArr = (JSONArray) nowDialog.get("ansvers");
+                        ansvers = new String[ansverArr.size()];
+                        ansversID = new String[ansverArr.size()];
+                        for (int i = 0; i < ansvers.length; i++) {
+                            ansvers[i] = replics.get(ansverArr.get(i)).toString();
+                            ansversID[i] = ansverArr.get(i).toString();
+                        }
+                    } else {
+                        ansvers = null;
+                        ansversID = null;
+                    }
+                    if (nowDialog.containsKey("exit")){
+                        JSONArray exitArr = (JSONArray) nowDialog.get("exit");
+                        exit = new String[exitArr.size()];
+                        exitID = new String[exitArr.size()];
+                        for (int i = 0; i < exit.length; i++) {
+                            exit[i] = replics.get(exitArr.get(i)).toString();
+                            exitID[i] = exitArr.get(i).toString();
+                        }
+                    } else {
+                        exit = null;
+                        exitID = null;
+                    }
+                    dialogCloud = new Dialog(cloudTex, ansvers, ansversID, exit, exitID, font, getStage(), 2, this);
+                    getStage().addActor(dialogCloud);
+                } else {
+                    System.out.println("Исключение: Нет ключа ansvers!");
+                }
+            }
+        }
+    }
+
+    public void playMusic(JSONObject action){
+        WorldBuilder.music.pause();
+        Music actionmusic;
+        actionmusic = Gdx.audio.newMusic(Gdx.files.internal("resources/music/" + action.get("actionInfo")));
+        actionmusic.setVolume(Main.volumeMusic);
+        if (!actionmusic.isPlaying()){
+            actionmusic.play();
+        }
+        Music.OnCompletionListener listenerMusic = music -> {
+            WorldBuilder.music.play();
+            if (actionmusic.isPlaying()){
+                actionmusic.stop();
+            }
+            actionmusic.dispose();
+        };
+        actionmusic.setOnCompletionListener(listenerMusic);
+    }
+
+    public void changeStateDialog (String id){
+        JSONArray replicsArr = (JSONArray) myObject.get("replics");
+        JSONObject replics = (JSONObject) replicsArr.get(0);
+        JSONArray dialogArr = (JSONArray) myObject.get("dialog");
+        JSONObject dialog = (JSONObject) dialogArr.get(0);
+        if (dialog.containsKey(stateDialog)){
+            JSONObject nowDialog = (JSONObject) dialog.get(stateDialog);
+            if (nowDialog.containsKey("selectansver"+id)){
+                stateDialog = nowDialog.get("selectansver"+id).toString();
+                removeDialog();
+                loadReplic();
+            } else {
+                System.out.println("Исключение: Нет ключа selectansver" + id + " !");
+                System.out.println(stateDialog);
+            }
+        }
+    }
+
+    public void callCloud(Texture atlas, float x, float y, String string, BitmapFont font, Stage stage, float scale,int period, String soundPatch, WorldObject worldObject){
+        cloudActor = new Cloud(atlas, x, y, string, font, stage, scale, period, soundPatch, worldObject);
+    }
+
+    private void addInputListener(String name, Stage stage){
+        cloudTex = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
         try {
-            myArray  = JsonUtils.parseObj(name);
+            myObject  = JsonUtils.parseObj(name);
         } catch (NullPointerException ex){
             ex.printStackTrace();
         }
@@ -139,25 +298,29 @@ public class WorldObject extends Actor{
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("touchDown" + mySprite.getRegionWidth() + mySprite.getRegionHeight());
+                System.out.println("touchDown " + nameModel);
+                removeCloud();
+                loadReplic();
                 return false;
             }
 
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                System.out.println("enter");
+                System.out.println("enter " + nameModel);
                 super.enter(event, x, y, pointer, fromActor);
             }
 
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                System.out.println("exit");
+                System.out.println("exit " + nameModel);
                 super.exit(event, x, y, pointer, toActor);
             }
         };
         addListener(listener);
+        stage.addActor(this);
     }
-    public void addInputListener(String name, String patchFont, int size, float scale) {
+
+    public void addInputListener(String name, String patchFont, int size, float scale, Stage stage) {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(patchFont));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = size;
@@ -168,53 +331,12 @@ public class WorldObject extends Actor{
         font = generator.generateFont(parameter);
         font.getData().scale(scale);
         generator.dispose();
-        addInputListener(name);
-    }
-    public void addInputListener(String name, BitmapFont font){
-        this.font = font;
-        addInputListener(name);
+        addInputListener(name, stage);
     }
 
-    public void click(){
-        JSONObject object;
-        object = (JSONObject) myArray.get(0);
-        if (object.get("type").equals("monolog")){
-            iter++;
-            JSONArray replicsArr = (JSONArray) object.get("replics");
-            JSONObject replics = (JSONObject) replicsArr.get(0);
-            if(!replics.containsKey("action" + iter)) {
-                //Vector2 pos = WorldBuilder.getHero().getRect().getPosition().sub(WorldBuilder.getHero().getModelOrigin());
-                if(replics.containsKey(iter)) {
-                    Cloud cloudActor = new Cloud(cloud, WorldBuilder.getCenterx(), WorldBuilder.getCentery(), replics.get(iter).toString(), font, getStage(), 5, 60, soundPatch);
-                } else {
-                    iter --;
-                    Cloud cloudActor = new Cloud(cloud, WorldBuilder.getCenterx(), WorldBuilder.getCentery(), replics.get(iter).toString(), font, getStage(), 5, 60, soundPatch);
-                }
-            } else {
-                JSONArray actionArray = (JSONArray) replics.get("action" + iter);
-                JSONObject action = (JSONObject) actionArray.get(0);
-                if (action.get("action").equals("playmusic")){
-                    WorldBuilder.music.pause();
-                    Music actionmusic;
-                    actionmusic = Gdx.audio.newMusic(Gdx.files.internal("resources/music/" + action.get("actionInfo")));
-                    actionmusic.setVolume(Main.volumeMusic);
-                    if (!actionmusic.isPlaying()){
-                        actionmusic.play();
-                    }
-                    Music.OnCompletionListener listenerMusic = music -> {
-                        WorldBuilder.music.play();
-                        if (actionmusic.isPlaying()){
-                            actionmusic.stop();
-                        }
-                        actionmusic.dispose();
-                    };
-                    actionmusic.setOnCompletionListener(listenerMusic);
-                }
-                if (action.containsKey("replic")){
-                    Cloud cloudActor = new Cloud(cloud, WorldBuilder.getCenterx(), WorldBuilder.getCentery(), action.get("replic").toString(), font, getStage(), 5, 60, soundPatch);
-                }
-            }
-        }
+    public void addInputListener(String name, BitmapFont font, Stage stage){
+        this.font = font;
+        addInputListener(name, stage);
     }
 
     public void attFix(){
@@ -248,12 +370,15 @@ public class WorldObject extends Actor{
     public void draw(Batch batch, float alpha){
         if (mySprite != null) {
             Vector2 pos = rect.getPosition().sub(modelOrigin);
+            if (getStage() != null) {
+                Vector2 stageCords = getCordsScreen();
+                setPosition(stageCords.x, stageCords.y);
+                setSize(mySprite.getWidth() * getStage().getWidth()/16f, mySprite.getHeight() * getStage().getHeight()/9f);
+            }
             mySprite.setPosition(pos.x, pos.y);
             mySprite.setOrigin(modelOrigin.x, modelOrigin.y);
             mySprite.setRotation(rect.getAngle() * MathUtils.radiansToDegrees);
             mySprite.setBounds(mySprite.getX(), mySprite.getY(), mySprite.getWidth(), mySprite.getHeight());
-            setPosition(mySprite.getX()-anglex, mySprite.getY()-angley);
-            setSize(mySprite.getRegionWidth(), mySprite.getRegionHeight());
             mySprite.draw(batch, alpha);
         }
         //System.out.println(rect.getUserData());
@@ -296,10 +421,14 @@ public class WorldObject extends Actor{
     }
 
     public void setCloud(Texture cloud) {
-        this.cloud = cloud;
+        this.cloudTex = cloud;
     }
 
     public void setSoundPatch(String soundPatch) {
         this.soundPatch = soundPatch;
+    }
+
+    public boolean isMovedCloud() {
+        return movedCloud;
     }
 }

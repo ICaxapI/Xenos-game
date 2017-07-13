@@ -32,10 +32,10 @@ public class JsonUtils {
             e.printStackTrace();
         }
     }
-    public static JSONArray parseObj(String objName) throws NullPointerException{
-        JSONArray msg = null;
+    public static JSONObject parseObj(String objName) throws NullPointerException{
+        JSONObject msg = null;
         if (allJSONobjects.containsKey(objName)){
-            msg = (JSONArray) allJSONobjects.get(objName);
+            msg = (JSONObject) allJSONobjects.get(objName);
             allJSONobjects.remove(objName);
         } else {
             System.out.println("В JSON нет объекта " + objName + ".");

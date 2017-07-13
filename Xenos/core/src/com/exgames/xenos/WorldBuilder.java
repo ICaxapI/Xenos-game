@@ -114,7 +114,7 @@ public class WorldBuilder implements Screen {
         handler.setLightShader(Shader.createShader());
         handler.setAmbientLight(0.85f);
         handler.setBlur(true);
-        handler.setBlurNum(5);
+        handler.setBlurNum(1);
         handler.setCulling(true);
         handler.setLightMapRendering(true);
         handler.setShadows(true);

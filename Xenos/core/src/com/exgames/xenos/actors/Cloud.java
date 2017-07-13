@@ -7,10 +7,17 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
+import com.exgames.xenos.JsonUtils;
 import com.exgames.xenos.Main;
+import com.exgames.xenos.WorldBuilder;
 
 import java.util.Objects;
 import java.util.Timer;
@@ -49,8 +56,10 @@ public class Cloud extends Actor{
     private Label.LabelStyle labelStyle;
     private static Timer timer;
     private TimerTask timerTask;
+    private MyTimerTaskStop timerTaskStop;
+    private WorldObject worldObject;
 
-    public Cloud(Texture atlas, float x, float y, String string, BitmapFont font, Stage stage, float scale,int period, String soundPatch){
+    public Cloud(Texture atlas, float x, float y, String string, BitmapFont font, Stage stage, float scale,int period, String soundPatch, WorldObject worldObject){
         if (!initialized) {
             timer = new Timer(true);
             atlas.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
@@ -66,12 +75,16 @@ public class Cloud extends Actor{
             textail = new TextureRegion(atlas, 11, 10, 5, 6);
             initialized = true;
         }
+        this.worldObject = worldObject;
         peek = Gdx.audio.newSound(Gdx.files.internal(soundPatch));
-        labelStyle = new Label.LabelStyle();//Не забыть dispose!
+        labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
         myLabel = new Label(string, labelStyle);
         myLabel.setText("");
+        myLabel.setAlignment(Align.center);
         this.needString = string;
+        x -= myLabel.getWidth()/2f;
+        y -= myLabel.getHeight()/2f;
         myLabel.setPosition(x, y);
         ltSprite = new Sprite(texltRegion); //левый верхний
         mtSprite = new Sprite(texmtRegion); //верхний центр
@@ -86,10 +99,8 @@ public class Cloud extends Actor{
         this.y = y;
         this.scale = scale;
         updateCloud();
-        setPosition(x, y);
-        stage.addActor(this);
-        updateCloud();
-        timerTask = new MyTimerTask();
+        addInputListener(stage);
+        timerTask = new MyTimerTaskAddChar();
         timer.scheduleAtFixedRate(timerTask, period, period);
     }
 
@@ -112,10 +123,28 @@ public class Cloud extends Actor{
         mbSprite.setPosition(x, y - mbSprite.getHeight());
         rbSprite.setSize(texrbRegion.getRegionWidth() * scale, texrbRegion.getRegionHeight() * scale);
         rbSprite.setPosition(x + myLabel.getWidth(), y - rbSprite.getHeight());
+        setBounds(lbSprite.getX(), lbSprite.getY(),
+                (lbSprite.getWidth() * lbSprite.getScaleX()) + (mbSprite.getWidth() * mbSprite.getScaleX()) + (rbSprite.getWidth() * rbSprite.getScaleX()),
+                (lbSprite.getHeight() * lbSprite.getScaleY()) + (mlSprite.getHeight() * mlSprite.getScaleY()) + (ltSprite.getHeight() * lbSprite.getScaleY()));
+        myLabel.setPosition(x, y);
     }
+
+    //private Vector2 getCordsScreen(){
+        //Vector2 heroWorld = WorldBuilder.getHero().getRect().getWorldCenter();
+        //Vector2 objWorld = getRect().getPosition().sub(getModelOrigin());
+        //float alignx = (objWorld.x - heroWorld.x)*(getStage().getWidth()/16f);
+        //float aligny = (objWorld.y - heroWorld.y)*(getStage().getHeight()/9f);
+        //Vector2 objStage = new Vector2(getStage().getWidth()/2f + alignx,  getStage().getHeight()/2f + aligny);
+        //return objStage;
+    //}
 
     @Override
     public void draw(Batch batch, float alpha){
+        if (worldObject.isMovedCloud()){
+            x = worldObject.getX() + (worldObject.getWidth()/2) - (myLabel.getWidth()/2);
+            y = worldObject.getY() + worldObject.getHeight() + 20;
+            updateCloud();
+        }
         ltSprite.draw(batch);
         mtSprite.draw(batch);
         rtSprite.draw(batch);
@@ -126,11 +155,31 @@ public class Cloud extends Actor{
         mbSprite.draw(batch);
         rbSprite.draw(batch);
         myLabel.draw(batch, 1f);
-        updateCloud();
     }
 
-    public void dispose(){
+    void dispose(){
         peek.dispose();
+        this.remove();
+        if (timerTask != null) {
+            timerTask.cancel();
+        }
+        if (timerTaskStop != null) {
+            timerTaskStop.cancel();
+        }
+        ltSprite = null;
+        lbSprite = null;
+        rtSprite = null;
+        rbSprite = null;
+        cSprite = null;
+        mtSprite = null;
+        mlSprite = null;
+        mrSprite = null;
+        mbSprite = null;
+        myLabel = null;
+        needString = null;
+        labelStyle  = null;
+        timerTask  = null;
+        timerTaskStop = null;
     }
 
     @Override
@@ -138,11 +187,11 @@ public class Cloud extends Actor{
         super.act(delta);
     }
 
-    class MyTimerTask extends TimerTask {
+    class MyTimerTaskAddChar extends TimerTask {
         private char lastSymbol;
         private int counter;
 
-        MyTimerTask( ) {
+        MyTimerTaskAddChar() {
         }
 
         public void run( ) {
@@ -160,11 +209,38 @@ public class Cloud extends Actor{
                 }
             }
             else {
-                timerTask.cancel ( );
+                timerTaskStop = new MyTimerTaskStop();
+                timer.scheduleAtFixedRate(timerTaskStop, 3000, 3000);
+                timerTask.cancel();
             }
         }
 
     }
+
+    class MyTimerTaskStop extends TimerTask {
+
+        MyTimerTaskStop(){
+        }
+
+        public void run(){
+            worldObject.removeCloud();
+        }
+
+    }
+
+    private void addInputListener(Stage stage){
+        InputListener listener = new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("touchDown cloud");
+                worldObject.removeCloud();
+                return false;
+            }
+        };
+        addListener(listener);
+        stage.addActor(this);
+    }
+
 }
 
 

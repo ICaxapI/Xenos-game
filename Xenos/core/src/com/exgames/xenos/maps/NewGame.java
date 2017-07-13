@@ -29,8 +29,10 @@ import static com.exgames.xenos.Main.camera;
 public class NewGame extends WorldBuilder {
     private BitmapFont font;
     private Texture ship;
+    private Texture metalBoxTex;
     private Vector2 wallModelOrigin;
-    private WorldObject wall;
+    private WorldObject glad;
+    private WorldObject leks;
     private Door door;
 
     public NewGame(Game game, SpriteBatch batch, Viewport viewport) {
@@ -49,7 +51,7 @@ public class NewGame extends WorldBuilder {
         font = generator.generateFont(parameter);
         font.getData().scale(0.005f);
         generator.dispose();
-
+        metalBoxTex = new Texture(Gdx.files.internal("resources/texture/metalBox.png"));
         ship = new Texture(Gdx.files.internal("resources/texture/ship.png"));
         PerformanceCounter kek = new PerformanceCounter("kek");
         kek.start();
@@ -57,16 +59,29 @@ public class NewGame extends WorldBuilder {
         kek.stop();
         JsonUtils.parseJson(jsonInput);
         System.out.println("Время загрузки Json: " + kek.current);
-        wall = new WorldObject(ship, "NewWorld", "Ship", BodyDef.BodyType.StaticBody, 100,
-                15.9f, 21.55f, 0, 0, 0, 1);
-        createNewObj(wall, 15.9f, 21.55f, CATEGORY_WALL, MASK_WALL);
+
+        leks = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
+                0.7f, 0.68f, 1, 1, 1, 100, 2, 0);
+        createNewObj(leks, 0.7f, 0.68f, CATEGORY_WALL, MASK_WALL);
+        leks.addInputListener("Лекс", font, stage);
+
+        glad = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
+                0.7f, 0.68f, 1, 1, 1, 100, 1, 0);
+        createNewObj(glad, 0.7f, 0.68f, CATEGORY_WALL, MASK_WALL);
+        glad.addInputListener("ГЛЭД", font, stage);
+
+        //wall = new WorldObject(ship, "NewWorld", "Ship", BodyDef.BodyType.StaticBody, 100,
+                //15.9f, 21.55f, 0, 0, 0, 1);
+        //createNewObj(wall, 15.9f, 21.55f, CATEGORY_WALL, MASK_WALL);
+
         door = new Door("NewWorld", "Door", BodyDef.BodyType.KinematicBody, 100, 0, 0, 0, 0, camera.viewportWidth/2f-2.125f,camera.viewportHeight/2f-0.5f, true);
         createNewObj(door, CATEGORY_OBJECTS, MASK_OBJECTS);
+
         Detector detector = new Detector(0.5f, door.getRect().getWorldPoint(door.getRect().getLocalCenter()).x,camera.viewportHeight/2f-0.5f);
         createDetector(door, detector, CATEGORY_SENSOR, MASK_SENSOR);
         door.initVector();
 
-        PointLight herolight = new PointLight(handler, 500, Color.WHITE, 7.5f, 0,0);
+        PointLight herolight = new PointLight(handler, 500, Color.WHITE, 7f, 0,0);
         herolight.attachToBody(getHeroBody(), 0.315f, 0.43f);
         herolight.setSoft(false);
         herolight.setIgnoreAttachedBody(true);
@@ -75,5 +90,7 @@ public class NewGame extends WorldBuilder {
         filterLight.categoryBits = CATEGORY_LIGHT;
         filterLight.maskBits = MASK_LIGHT;
         herolight.setContactFilter(filterLight);
+
+        stage.setDebugAll(true); //Дебаг стейджа!
     }
 }
