@@ -63,12 +63,12 @@ public class NewGame extends WorldBuilder {
         leks = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
                 0.7f, 0.68f, 1, 1, 1, 100, 2, 0);
         createNewObj(leks, 0.7f, 0.68f, CATEGORY_WALL, MASK_WALL);
-        leks.addInputListener("Lex", font, stage);
+        leks.addInputListener("Лекс", font, stage);
 
         glad = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
                 0.7f, 0.68f, 1, 1, 1, 100, 1, 0);
         createNewObj(glad, 0.7f, 0.68f, CATEGORY_WALL, MASK_WALL);
-        glad.addInputListener("GLED", font, stage);
+        glad.addInputListener("ГЛЭД", font, stage);
 
         //wall = new WorldObject(ship, "NewWorld", "Ship", BodyDef.BodyType.StaticBody, 100,
                 //15.9f, 21.55f, 0, 0, 0, 1);
