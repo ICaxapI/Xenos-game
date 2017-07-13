@@ -40,7 +40,7 @@
       }
     ]
   },
-  "ГЛЭД":{
+  "GLED":{
     "type": "dialog",
     "replics": [
       {
@@ -55,7 +55,7 @@
       }
     ]
   },
-  "Лекс": {
+  "Lex": {
     "type": "dialog",
     "replics": [
       {
