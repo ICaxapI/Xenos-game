@@ -104,7 +104,7 @@
         "v2": {
           "start": "5",
           "interupted1A": "ГЛЭД",
-          "interupded1R": "6",
+          "interupted1R": "6",
           "interupted2A": "Лекс",
           "interupted2R": "7",
           "ansvers": ["8","9"],
@@ -128,7 +128,7 @@
         "v6": {
           "start": "15",
           "interupted1A": "ГЛЭД",
-          "interupded1R": "6",
+          "interupted1R": "6",
           "interupted2A": "Лекс",
           "interupted2R": "7",
           "ansvers": ["8","9"],

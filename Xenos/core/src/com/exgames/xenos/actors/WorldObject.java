@@ -23,6 +23,7 @@ import com.exgames.xenos.maps.NewGame;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static com.exgames.xenos.Main.camera;
@@ -50,6 +51,23 @@ public class WorldObject extends Actor{
     private Cloud cloudActor;
     private boolean movedCloud = false;
     private Dialog dialogCloud;
+
+    private short interuptedNumb;
+    private String myName;
+    private static WorldObject calldObject;
+    private static boolean canInterupted;
+
+    private Texture staticatlas;
+    private static String[] staticansvers;
+    private static String staticansversID[];
+    private static String[] staticexit;
+    private static String[] staticexitID;
+    private static BitmapFont staticfont;
+    private static Stage staticstage;
+    private static float staticscale;
+    private static WorldObject staticmyObject;
+
+
 
     private WorldObject(String world, String nameModel, BodyDef.BodyType bodyType, int density, float linearDamping,
                        float angularDamping, float restitution, float friction){
@@ -89,6 +107,18 @@ public class WorldObject extends Actor{
         body.position.set(x, y);
     }
 
+    public static WorldObject getCalldObject() {
+        return calldObject;
+    }
+
+    public static boolean isCanInterupted() {
+        return canInterupted;
+    }
+
+    public static void setCanInterupted(boolean canInterupted) {
+        WorldObject.canInterupted = canInterupted;
+    }
+
     private Vector2 getCordsScreen(){
         Vector2 heroWorld = WorldBuilder.getHero().getRect().getWorldCenter();
         Vector2 objWorld = getRect().getPosition().sub(getModelOrigin());
@@ -123,10 +153,10 @@ public class WorldObject extends Actor{
             if(!replics.containsKey("action" + iter)) {
                 //Vector2 pos = WorldBuilder.getHero().getRect().getPosition().sub(WorldBuilder.getHero().getModelOrigin());
                 if(replics.containsKey(String.valueOf(iter))) {
-                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 60, soundPatch, this);
+                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 60, soundPatch, this, false);
                 } else {
                     iter --;
-                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 60, soundPatch, this);
+                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 60, soundPatch, this, false);
                 }
             } else {
                 JSONObject action = (JSONObject) replics.get("action" + iter);
@@ -136,7 +166,7 @@ public class WorldObject extends Actor{
                     stateDialog = action.get("actionInfo").toString();
                 }
                 if (action.containsKey("replic")){
-                    callCloud(cloudTex, (getStage().getWidth()/2f), (getStage().getHeight()/2f), action.get("replic").toString(), font, getStage(), 2, 60, soundPatch, this);
+                    callCloud(cloudTex, (getStage().getWidth()/2f), (getStage().getHeight()/2f), action.get("replic").toString(), font, getStage(), 2, 60, soundPatch, this, false);
                 }
             }
         } else if (myObject.get("type").equals("dialog")){
@@ -147,10 +177,11 @@ public class WorldObject extends Actor{
             JSONObject dialog = (JSONObject) dialogArr.get(0);
             if (dialog.containsKey(stateDialog)){
                 JSONObject nowDialog = (JSONObject) dialog.get(stateDialog);
-                if (nowDialog.containsKey("start")){
+                if (nowDialog.containsKey("start") & interuptedNumb <= 1){
                     if (cloudActor == null) {
                         if(!replics.containsKey("action" + nowDialog.get("start"))) {
-                            callCloud(cloudTex, getX(), getY(), replics.get(nowDialog.get("start")).toString(), font, getStage(), 2, 60, soundPatch, this);
+                            System.out.println(interuptedNumb);
+                            callCloud(cloudTex, getX(), getY(), replics.get(nowDialog.get("start")).toString(), font, getStage(), 2, 60, soundPatch, this, false);
                         } else {
                             JSONObject action = (JSONObject) replics.get("action" + nowDialog.get("start"));
                             if (action.get("action").equals("playmusic")){
@@ -159,16 +190,39 @@ public class WorldObject extends Actor{
                                 stateDialog = action.get("actionInfo").toString();
                             }
                             if (action.containsKey("replic")){
-                                callCloud(cloudTex, (getStage().getWidth()/2f), (getStage().getHeight()/2f), action.get("replic").toString(), font, getStage(), 2, 60, soundPatch, this);
+                                callCloud(cloudTex, (getStage().getWidth()/2f), (getStage().getHeight()/2f), action.get("replic").toString(), font, getStage(), 2, 60, soundPatch, this, false);
                             }
                         }
                     }
                 } else {
                     System.out.println("Исключение: Нет ключа start!");
                 }
-                if (nowDialog.containsKey("interupted1")){
-
+                if (nowDialog.containsKey("interupted" + interuptedNumb + "A")){
+                    if (cloudActor != null){
+                        cloudActor.setInterupted(true);
+                    }
+                    if (calldObject == null) {
+                        calldObject = this;
+                    }
+                    if (canInterupted) {
+                        canInterupted = false;
+                        String needName = nowDialog.get("interupted" + interuptedNumb + "A").toString();
+                        String interuptedString = replics.get(nowDialog.get("interupted" + interuptedNumb + "R").toString()).toString();
+                        ArrayList<WorldObject> arrayWorldObj = WorldBuilder.getListObjects(); //Можно оптимизировать. Сделать ещё один аррайлист в котором хранить только обьекты с Dialogs.
+                        for (int i = 0; i < arrayWorldObj.size() - 1; i++) {
+                            if (arrayWorldObj.get(i).myName.equals(needName)) {
+                                arrayWorldObj.get(i).callCloud(arrayWorldObj.get(i).cloudTex, arrayWorldObj.get(i).getX(),
+                                        arrayWorldObj.get(i).getY(), interuptedString, arrayWorldObj.get(i).font, arrayWorldObj.get(i).getStage(), 2, 60, arrayWorldObj.get(i).soundPatch, arrayWorldObj.get(i), false);
+                                arrayWorldObj.get(i).cloudActor.setInterupted(true);
+                                i = arrayWorldObj.size() - 1;
+                            }
+                            System.out.println("Прочекали " + arrayWorldObj.get(i).myName);
+                        }
+                        interuptedNumb++;
+                    }
                 } else if (nowDialog.containsKey("ansvers") || nowDialog.containsKey("exit")){
+                    calldObject = null;
+                    interuptedNumb = 1;
                     String[] ansvers;
                     String[] ansversID;
                     String[] exit;
@@ -197,14 +251,45 @@ public class WorldObject extends Actor{
                         exit = null;
                         exitID = null;
                     }
-                    dialogCloud = new Dialog(cloudTex, ansvers, ansversID, exit, exitID, font, getStage(), 2, this);
-                    getStage().addActor(dialogCloud);
+                    deferCallDialog(cloudTex, ansvers, ansversID, exit, exitID, font, getStage(), 2, this);
                 } else {
                     System.out.println("Исключение: Нет ключа ansvers!");
                 }
             }
         }
     }
+
+    private void callDialog(Texture atlas, String[] ansvers, String ansversID[], String[] exit, String[] exitID, BitmapFont font, Stage stage, float scale, WorldObject myObject){
+        dialogCloud = new Dialog(atlas, ansvers, ansversID, exit, exitID, font, stage, scale,  myObject);
+        getStage().addActor(dialogCloud);
+    }
+    public void callDialog(){
+        if (staticatlas != null) {
+            dialogCloud = new Dialog(staticatlas, staticansvers, staticansversID, staticexit, staticexitID, staticfont, staticstage, staticscale, staticmyObject);
+            getStage().addActor(dialogCloud);
+            staticatlas = null;
+            staticansvers = null;
+            staticansversID = null;
+            staticexit = null;
+            staticexitID = null;
+            staticfont = null;
+            staticstage = null;
+            staticscale = 0;
+            staticmyObject = null;
+        }
+    }
+    public void deferCallDialog(Texture atlas, String[] ansvers, String ansversID[], String[] exit, String[] exitID, BitmapFont font, Stage stage, float scale, WorldObject myObject){
+        staticatlas = atlas;
+        staticansvers = ansvers;
+        staticansversID = ansversID;
+        staticexit = exit;
+        staticexitID = exitID;
+        staticfont = font;
+        staticstage = stage;
+        staticscale = scale;
+        staticmyObject = myObject;
+    }
+
 
     public void playMusic(JSONObject action){
         WorldBuilder.music.pause();
@@ -242,14 +327,15 @@ public class WorldObject extends Actor{
         }
     }
 
-    public void callCloud(Texture atlas, float x, float y, String string, BitmapFont font, Stage stage, float scale,int period, String soundPatch, WorldObject worldObject){
-        cloudActor = new Cloud(atlas, x, y, string, font, stage, scale, period, soundPatch, worldObject);
+    public void callCloud(Texture atlas, float x, float y, String string, BitmapFont font, Stage stage, float scale,int period, String soundPatch, WorldObject worldObject, boolean interupted){
+        cloudActor = new Cloud(atlas, x, y, string, font, stage, scale, period, soundPatch, worldObject, interupted);
     }
 
     private void addInputListener(String name, Stage stage){
         cloudTex = new Texture(Gdx.files.internal("resources/entities/cloud.png"));
         try {
             myObject  = JsonUtils.parseObj(name);
+            myName = name;
         } catch (NullPointerException ex){
             ex.printStackTrace();
         }
@@ -430,5 +516,9 @@ public class WorldObject extends Actor{
 
     public boolean isMovedCloud() {
         return movedCloud;
+    }
+
+    public String getMyName() {
+        return myName;
     }
 }

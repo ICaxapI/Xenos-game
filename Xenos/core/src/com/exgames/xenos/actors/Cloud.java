@@ -58,8 +58,9 @@ public class Cloud extends Actor{
     private TimerTask timerTask;
     private MyTimerTaskStop timerTaskStop;
     private WorldObject worldObject;
+    private boolean interupted;
 
-    public Cloud(Texture atlas, float x, float y, String string, BitmapFont font, Stage stage, float scale,int period, String soundPatch, WorldObject worldObject){
+    public Cloud(Texture atlas, float x, float y, String string, BitmapFont font, Stage stage, float scale,int period, String soundPatch, WorldObject worldObject, boolean interupted){
         if (!initialized) {
             timer = new Timer(true);
             atlas.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
@@ -75,6 +76,7 @@ public class Cloud extends Actor{
             textail = new TextureRegion(atlas, 11, 10, 5, 6);
             initialized = true;
         }
+        this.interupted = interupted;
         this.worldObject = worldObject;
         peek = Gdx.audio.newSound(Gdx.files.internal(soundPatch));
         labelStyle = new Label.LabelStyle();
@@ -158,7 +160,7 @@ public class Cloud extends Actor{
     }
 
     void dispose(){
-        peek.dispose();
+        //peek.dispose();
         this.remove();
         if (timerTask != null) {
             timerTask.cancel();
@@ -187,6 +189,10 @@ public class Cloud extends Actor{
         super.act(delta);
     }
 
+    public void setInterupted(boolean calledDialog){
+        this.interupted = calledDialog;
+    }
+
     class MyTimerTaskAddChar extends TimerTask {
         private char lastSymbol;
         private int counter;
@@ -209,6 +215,11 @@ public class Cloud extends Actor{
                 }
             }
             else {
+                if (interupted){
+                    WorldObject.setCanInterupted(true);
+                    WorldObject.getCalldObject().loadReplic();
+                }
+                worldObject.callDialog();
                 timerTaskStop = new MyTimerTaskStop();
                 timer.scheduleAtFixedRate(timerTaskStop, 3000, 3000);
                 timerTask.cancel();

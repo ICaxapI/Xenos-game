@@ -47,7 +47,7 @@ public class Dialog extends Actor{
 
     public Dialog(Texture atlas, String[] ansvers, String ansversID[], String[] exit, String[] exitId, BitmapFont font, Stage stage, float scale, WorldObject myObject){
         if (!initialized) {
-            atlas.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
+//            atlas.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest); почему-то валит приложение, если вызывать через отложку ._.
             texltRegion = new TextureRegion(atlas, 0, 0, 3, 3);
             texrtRegion = new TextureRegion(atlas, 8, 0, 3, 3);
             texcRegion = new TextureRegion(atlas, 3, 3, 5, 5);

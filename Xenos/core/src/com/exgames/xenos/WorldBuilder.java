@@ -315,6 +315,9 @@ public class WorldBuilder implements Screen {
     public Stage getStage(){
         return stage;
     }
+    public static ArrayList<WorldObject> getListObjects(){
+        return listObjects;
+    }
 
     @Override
     public void resize(int width, int height) {
