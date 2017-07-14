@@ -49,7 +49,7 @@ public class WorldObject extends Actor{
     private String soundPatch = "resources/music/peek.wav";
     private String stateDialog = "v1";//сохранять и применять сюда из файла сохранения
     private Cloud cloudActor;
-    private boolean movedCloud = false;
+    private boolean movedCloud = true;
     private Dialog dialogCloud;
 
     private short interuptedNumb;
@@ -144,6 +144,7 @@ public class WorldObject extends Actor{
 
     public void loadReplic(){
         if (myObject.get("type").equals("monolog")){
+            movedCloud = false;
             if (cloudActor != null){
                 removeCloud();
             }
@@ -170,7 +171,6 @@ public class WorldObject extends Actor{
                 }
             }
         } else if (myObject.get("type").equals("dialog")){
-            movedCloud = true;
             JSONArray replicsArr = (JSONArray) myObject.get("replics");
             JSONObject replics = (JSONObject) replicsArr.get(0);
             JSONArray dialogArr = (JSONArray) myObject.get("dialog");
@@ -190,7 +190,7 @@ public class WorldObject extends Actor{
                                 stateDialog = action.get("actionInfo").toString();
                             }
                             if (action.containsKey("replic")){
-                                callCloud(cloudTex, (getStage().getWidth()/2f), (getStage().getHeight()/2f), action.get("replic").toString(), font, getStage(), 2, 60, soundPatch, this, false);
+                                callCloud(cloudTex, getX(), getY(), action.get("replic").toString(), font, getStage(), 2, 60, soundPatch, this, false);
                             }
                         }
                     }
