@@ -33,6 +33,7 @@ public class NewGame extends WorldBuilder {
     private Vector2 wallModelOrigin;
     private WorldObject glad;
     private WorldObject leks;
+    private WorldObject testFont;
     private Door door;
 
     public NewGame(Game game, SpriteBatch batch, Viewport viewport) {
@@ -41,7 +42,7 @@ public class NewGame extends WorldBuilder {
 
     public void show(){
         super.show();
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/6.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/7.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 25;
         parameter.minFilter = Texture.TextureFilter.Nearest;
@@ -59,6 +60,11 @@ public class NewGame extends WorldBuilder {
         kek.stop();
         JsonUtils.parseJson(jsonInput);
         System.out.println("Время загрузки Json: " + kek.current);
+
+        testFont = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
+                0.7f, 0.68f, 1, 1, 1, 100, -1, 0);
+        createNewObj(testFont, 0.7f, 0.68f, CATEGORY_WALL, MASK_WALL);
+        testFont.addInputListener("Тест шрифта", font, stage);
 
         leks = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
                 0.7f, 0.68f, 1, 1, 1, 100, 2, 0);

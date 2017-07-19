@@ -1,4 +1,12 @@
 {
+  "Тест шрифта": {
+    "type": "monolog",
+    "replics": [
+      {
+        "1": "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩщЪъЫыЬХхьЭэЮюЯяabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\/?-+=()*&.;:,{}\"´`'<>"
+      }
+    ]
+  },
   "Ящик в комнате капитана": {
     "type": "monolog",
     "replics": [
