@@ -154,10 +154,10 @@ public class WorldObject extends Actor{
             if(!replics.containsKey("action" + iter)) {
                 //Vector2 pos = WorldBuilder.getHero().getRect().getPosition().sub(WorldBuilder.getHero().getModelOrigin());
                 if(replics.containsKey(String.valueOf(iter))) {
-                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 60, soundPatch, this, false);
+                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 20, soundPatch, this, false);
                 } else {
                     iter --;
-                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 60, soundPatch, this, false);
+                    callCloud(cloudTex, (getStage().getWidth()/2f), 280, replics.get(String.valueOf(iter)).toString(), font, getStage(), 2, 20, soundPatch, this, false);
                 }
             } else {
                 JSONObject action = (JSONObject) replics.get("action" + iter);
@@ -167,7 +167,7 @@ public class WorldObject extends Actor{
                     stateDialog = action.get("actionInfo").toString();
                 }
                 if (action.containsKey("replic")){
-                    callCloud(cloudTex, (getStage().getWidth()/2f), (getStage().getHeight()/2f), action.get("replic").toString(), font, getStage(), 2, 60, soundPatch, this, false);
+                    callCloud(cloudTex, (getStage().getWidth()/2f), (getStage().getHeight()/2f), action.get("replic").toString(), font, getStage(), 2, 20, soundPatch, this, false);
                 }
             }
         } else if (myObject.get("type").equals("dialog")){

@@ -3,7 +3,7 @@
     "type": "monolog",
     "replics": [
       {
-        "1": "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩщЪъЫыЬХхьЭэЮюЯяabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\/?-+=()*&.;:,{}\"´`'<>"
+        "1": "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфЧчЦцЧчШшЩ\nщЪъЫыЬХхьЭэЮюЯяabcdefghijklmnopqrstuvwxy\nzABCDEFGHIJKLMNOPQRSTUVWXYZ0123\n456789][_!$%#@|\/?-+=()*&\n.;:,{}\"´`'<>"
       }
     ]
   },

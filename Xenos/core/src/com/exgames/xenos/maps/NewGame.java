@@ -44,11 +44,11 @@ public class NewGame extends WorldBuilder {
         super.show();
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/7.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 25;
-        parameter.minFilter = Texture.TextureFilter.Nearest;
+        parameter.size = 50;
+        parameter.minFilter = Texture.TextureFilter.Linear;
         parameter.magFilter = Texture.TextureFilter.Linear;
         parameter.characters = FONT_CHARACTERS;
-        parameter.renderCount = 1;
+        parameter.renderCount = 10;
         font = generator.generateFont(parameter);
         font.getData().scale(0.005f);
         generator.dispose();
