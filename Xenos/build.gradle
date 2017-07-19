@@ -7,11 +7,6 @@ buildscript {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple/" }
-        flatDir dirs: 'proguard5.3.3/lib/'
-        jcenter()
-    }
-    dependencies {
-    	classpath ':proguard:'
     }
 }
 
@@ -39,6 +34,7 @@ allprojects {
 
 project(":desktop") {
     apply plugin: "java"
+    
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -68,17 +64,4 @@ project(":core") {
 
 tasks.eclipse.doLast {
     delete ".project"
-}
-
-task proguard(type: proguard.gradle.ProGuardTask) {
-  	configuration 'proguard.txt'
-
-  	injars 'desktop/build/libs/desktop-1.0.jar'
-  	outjars 'desktop/build/libs/desktop-1.0OUT.jar'
-
-  	libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
-  	printmapping 'out.map'
-    renamesourcefileattribute 'SourceFile'
-    keepattributes 'SourceFile,LineNumberTable'
-   
 }
