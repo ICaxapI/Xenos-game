@@ -45,12 +45,15 @@ public class NewGame extends WorldBuilder {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/font/7.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 50;
+        parameter.genMipMaps = true;
         parameter.minFilter = Texture.TextureFilter.Linear;
-        parameter.magFilter = Texture.TextureFilter.Linear;
+        parameter.magFilter = Texture.TextureFilter.Nearest;
         parameter.characters = FONT_CHARACTERS;
-        parameter.renderCount = 10;
+        parameter.renderCount = 1;
+        parameter.incremental = true;
+        parameter.mono = true;
         font = generator.generateFont(parameter);
-        font.getData().scale(0.005f);
+        font.getData().scale(0.0001f);
         generator.dispose();
         metalBoxTex = new Texture(Gdx.files.internal("resources/texture/metalBox.png"));
         ship = new Texture(Gdx.files.internal("resources/texture/ship.png"));
