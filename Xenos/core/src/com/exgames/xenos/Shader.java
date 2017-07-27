@@ -16,12 +16,9 @@ public class Shader {
         final String vertexShader =
                 "attribute vec4 vertex_positions;\n" //
                         + "attribute vec4 quad_colors;\n" //
-                        + "attribute float s;\n"
                         + "uniform mat4 u_projTrans;\n" //
-                        + "varying vec4 v_color;\n" //
                         + "void main()\n" //
                         + "{\n" //
-                        + "   v_color = s * quad_colors;\n" //
                         + "   gl_Position =  u_projTrans * vertex_positions;\n" //
                         + "}\n";
         final String fragmentShader = "#ifdef GL_ES\n" //
@@ -35,8 +32,8 @@ public class Shader {
                 + "uniform  vec4 ambient;\n"
                 + "void main()\n"//
                 + "{\n" //
-                + "gl_FragColor.rgb = (ambient.rgb + texture2D(u_texture, v_texCoords).rgb);\n"
-                + "gl_FragColor.a = 1.0;\n"
+                + "gl_FragColor.rgb = (texture2D(u_texture, v_texCoords).rgb);\n"
+                + "gl_FragColor.a = 0.5;\n"
                 + "}\n";
         ShaderProgram.pedantic = false;
         ShaderProgram lightShader = new ShaderProgram(vertexShader,

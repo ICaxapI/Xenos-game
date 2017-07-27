@@ -111,10 +111,10 @@ public class WorldBuilder implements Screen {
         hero.setName("Hero");
         hero.getRect().setFixedRotation(true);
 
-        RayHandler.setGammaCorrection(true);
+
         handler = new RayHandler(world);
         handler.setLightShader(Shader.createShader());
-        handler.setAmbientLight(0.85f);
+        handler.setAmbientLight(1f);
         handler.setBlur(true);
         handler.setBlurNum(1);
         handler.setCulling(true);
@@ -206,10 +206,10 @@ public class WorldBuilder implements Screen {
         }
         Gdx.gl.glClearColor(0.5f,0.5f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        handler.setCombinedMatrix((OrthographicCamera) camera);
-        handler.updateAndRender();
         camera.position.set(heroBody.getWorldPoint(heroBody.getLocalCenter()),0);
         camera.update();
+        updateHeroInput();
+        updateGrad(this);
         world.step(1/fps,5,5);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -218,11 +218,12 @@ public class WorldBuilder implements Screen {
         }
         hero.draw(batch);
         batch.end();
+        handler.update();
+        handler.render();
+        handler.setCombinedMatrix((OrthographicCamera) camera);
 //        renderer.render(world,camera.combined);
         stage.act(delta);
         stage.draw();
-        updateHeroInput();
-        updateGrad(this);
         //System.out.println(world.getFixtureCount());
     }
     public void setHeroVector(Vector2 updateVector){
@@ -237,15 +238,7 @@ public class WorldBuilder implements Screen {
 
     public void updateGrad(WorldBuilder world){
         double gradRect = Math.toDegrees(world.heroBody.getAngle());
-        if (mouseUpdate) {
-            gradneed = (float) mouseGrad - (float) gradRect;
-            while (gradneed >= 359.99f){
-                gradneed -= 360;
-            }
-            while (gradneed <= -359.99f){
-                gradneed += 360;
-            }
-        } else if (keyboardUpdate){
+        if (keyboardUpdate) {
             if (heroVector.x == 0 & heroVector.y == 0) {
 
             } else {
@@ -259,8 +252,16 @@ public class WorldBuilder implements Screen {
                     gradneed += 360;
                 }
             }
+        } else if (mouseUpdate){
+            gradneed = (float) mouseGrad - (float) gradRect;
+            while (gradneed >= 359.99f){
+                gradneed -= 360;
+            }
+            while (gradneed <= -359.99f){
+                gradneed += 360;
+            }
         } else {
-            gradneed = 0;
+            gradneed = 180;
         }
 //        if (gradRect >= 0) {
 //            while (gradRect >= 360) {

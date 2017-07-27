@@ -91,8 +91,8 @@ public class NewGame extends WorldBuilder {
         createDetector(door, detector, CATEGORY_SENSOR, MASK_SENSOR);
         door.initVector();
 
-        PointLight herolight = new PointLight(handler, 500, Color.WHITE, 7f, 0,0);
-        herolight.attachToBody(getHeroBody(), 0.29f, 0.43F);
+        PointLight herolight = new PointLight(handler, 500, Color.WHITE, 4.5f, 0,0);
+        herolight.attachToBody(getHeroBody(), 0.29f, 0.05f);
         herolight.setSoft(false);
         herolight.setIgnoreAttachedBody(true);
 
