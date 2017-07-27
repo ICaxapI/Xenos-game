@@ -19,6 +19,7 @@ import com.exgames.xenos.actors.Cloud;
 import com.exgames.xenos.actors.Detector;
 import com.exgames.xenos.actors.Door;
 import com.exgames.xenos.actors.WorldObject;
+import com.sun.org.apache.bcel.internal.generic.FADD;
 
 import static com.exgames.xenos.Main.camera;
 
@@ -65,18 +66,18 @@ public class NewGame extends WorldBuilder {
         System.out.println("Время загрузки Json: " + kek.current);
 
         testFont = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
-                0.7f, 0.68f, 1, 1, 1, 100, -1, 0);
-        createNewObj(testFont, 0.7f, 0.68f, CATEGORY_WALL, MASK_WALL);
+                0.35f, 0.34f, 15, 0, 0, 1, -1, 0);
+        createNewObj(testFont, 0.35f, 0.34f, CATEGORY_WALL, MASK_WALL);
         testFont.addInputListener("Тест шрифта", font, stage);
 
         leks = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
-                0.7f, 0.68f, 1, 1, 1, 100, 2, 0);
-        createNewObj(leks, 0.7f, 0.68f, CATEGORY_WALL, MASK_WALL);
+                0.35f, 0.34f, 15, 0, 0, 1, 2, 0);
+        createNewObj(leks, 0.35f, 0.34f, CATEGORY_WALL, MASK_WALL);
         leks.addInputListener("Лекс", font, stage);
 
         glad = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
-                0.7f, 0.68f, 1, 1, 1, 100, 1, 0);
-        createNewObj(glad, 0.7f, 0.68f, CATEGORY_WALL, MASK_WALL);
+                0.35f, 0.34f, 15, 0, 0, 1, 1, 0);
+        createNewObj(glad, 0.35f, 0.34f, CATEGORY_WALL, MASK_WALL);
         glad.addInputListener("ГЛЭД", font, stage);
 
         //wall = new WorldObject(ship, "NewWorld", "Ship", BodyDef.BodyType.StaticBody, 100,
@@ -91,7 +92,7 @@ public class NewGame extends WorldBuilder {
         door.initVector();
 
         PointLight herolight = new PointLight(handler, 500, Color.WHITE, 7f, 0,0);
-        herolight.attachToBody(getHeroBody(), 0.315f, 0.43f);
+        herolight.attachToBody(getHeroBody(), 0.29f, 0.43F);
         herolight.setSoft(false);
         herolight.setIgnoreAttachedBody(true);
 
@@ -100,6 +101,6 @@ public class NewGame extends WorldBuilder {
         filterLight.maskBits = MASK_LIGHT;
         herolight.setContactFilter(filterLight);
 
-        stage.setDebugAll(true); //Дебаг стейджа!
+//        stage.setDebugAll(true); //Дебаг стейджа!
     }
 }

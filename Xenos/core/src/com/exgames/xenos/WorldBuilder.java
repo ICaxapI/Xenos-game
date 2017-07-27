@@ -76,7 +76,7 @@ public class WorldBuilder implements Screen {
     public RayHandler handler;
 
 
-    private float gradneed;
+    private static float gradneed;
 
     public WorldBuilder(Game game, SpriteBatch batch, Viewport viewport){
         this.game = game;
@@ -94,20 +94,22 @@ public class WorldBuilder implements Screen {
         stage = new Stage(viewport);
         world = new com.badlogic.gdx.physics.box2d.World(new Vector2(0,0),true);
         world.setContactListener(new MyContactListener());
-        renderer = new Box2DDebugRenderer();
-        renderer.setDrawBodies(true);
-        renderer.setDrawContacts(true);
-        renderer.setDrawInactiveBodies(true);
-        renderer.setDrawJoints(true);
-        renderer.setDrawVelocities(true);
+//        renderer = new Box2DDebugRenderer();
+//        renderer.setDrawBodies(true);
+//        renderer.setDrawContacts(true);
+//        renderer.setDrawInactiveBodies(true);
+//        renderer.setDrawJoints(true);
+//        renderer.setDrawVelocities(true);
         inputController = new InputController(this);
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
-        texhero = new Texture(Gdx.files.internal("resources/texture/hero2.png"));
-        texhero.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        texhero = new Texture(Gdx.files.internal("resources/texture/AnimationHero.png"));
+        texhero.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         hero = new Hero(texhero, "NewWorld", "Hero", 100);
         heroBody = createNewObj(hero, heroBody, CATEGORY_PLAYER, MASK_PLAYER);
         heroBody.setUserData(new UserData(hero.getNameModel()));
+        hero.setName("Hero");
+        hero.getRect().setFixedRotation(true);
 
         RayHandler.setGammaCorrection(true);
         handler = new RayHandler(world);
@@ -120,10 +122,10 @@ public class WorldBuilder implements Screen {
         handler.setShadows(true);
         handler.resizeFBO(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 
-//        hero.addInputListener("Hero");
-//        stage.addActor(hero);
-//        hero.setAnglex(31); смещение до центра, если в физ модели отчёт начинается не с 0;0
-//        hero.setAngley(43);
+        //hero.addInputListener("Hero");
+        stage.addActor(hero);
+        hero.setAnglex(0);// смещение до центра, если в физ модели отчёт начинается не с 0;0
+        hero.setAngley(0);
 
 
 
@@ -204,7 +206,10 @@ public class WorldBuilder implements Screen {
         }
         Gdx.gl.glClearColor(0.5f,0.5f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        updateGrad(this);
+        handler.setCombinedMatrix((OrthographicCamera) camera);
+        handler.updateAndRender();
+        camera.position.set(heroBody.getWorldPoint(heroBody.getLocalCenter()),0);
+        camera.update();
         world.step(1/fps,5,5);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -213,14 +218,11 @@ public class WorldBuilder implements Screen {
         }
         hero.draw(batch);
         batch.end();
-        camera.position.set(heroBody.getWorldPoint(heroBody.getLocalCenter()),0);
-        camera.update();
-        handler.setCombinedMatrix((OrthographicCamera) camera);
-        handler.updateAndRender();
-        //renderer.render(world,camera.combined);
+//        renderer.render(world,camera.combined);
         stage.act(delta);
         stage.draw();
         updateHeroInput();
+        updateGrad(this);
         //System.out.println(world.getFixtureCount());
     }
     public void setHeroVector(Vector2 updateVector){
@@ -248,8 +250,8 @@ public class WorldBuilder implements Screen {
 
             } else {
                 mouseGrad = atan2(heroVector.x, heroVector.y) * 180 / PI;
-                mouseGrad = 360 - mouseGrad + 90;
-                gradneed = (float) Math.abs(mouseGrad) - (float) gradRect;
+                mouseGrad = 360 - mouseGrad;
+                gradneed = (float) Math.abs(mouseGrad) - (float) gradRect + 90;
                 while (gradneed >= 359.99f) {
                     gradneed -= 360;
                 }
@@ -260,33 +262,33 @@ public class WorldBuilder implements Screen {
         } else {
             gradneed = 0;
         }
-        if (gradRect >= 0) {
-            while (gradRect >= 360) {
-                gradRect -= 360;
-            }
-        } else {
-            while (gradRect <= -360) {
-                gradRect += 360;
-            }
-            gradRect += 360;
-        }
-        if        (gradneed >= 0 & Math.abs(gradneed) < 180){
-            world.heroBody.setAngularVelocity(gradneed/5);
-        } else if (gradneed <= 0 & Math.abs(gradneed) < 180){
-            world.heroBody.setAngularVelocity(gradneed/5);
-        } else if (gradneed >= 0 & Math.abs(gradneed) >= 180){
-            if (gradneed < 0) {
-                world.heroBody.setAngularVelocity((-360 - gradneed)/5);
-            } else {
-                world.heroBody.setAngularVelocity((-360 + gradneed)/5);
-            }
-        } else if (gradneed <= 0 & Math.abs(gradneed) >= 180){
-            if (gradneed < 0) {
-                world.heroBody.setAngularVelocity(( 360 + gradneed)/5);
-            } else {
-                world.heroBody.setAngularVelocity(( 360 - gradneed)/5);
-            }
-        }
+//        if (gradRect >= 0) {
+//            while (gradRect >= 360) {
+//                gradRect -= 360;
+//            }
+//        } else {
+//            while (gradRect <= -360) {
+//                gradRect += 360;
+//            }
+//            gradRect += 360;
+//        }
+//        if        (gradneed >= 0 & Math.abs(gradneed) < 180){
+//            world.heroBody.setAngularVelocity(gradneed/5);
+//        } else if (gradneed <= 0 & Math.abs(gradneed) < 180){
+//            world.heroBody.setAngularVelocity(gradneed/5);
+//        } else if (gradneed >= 0 & Math.abs(gradneed) >= 180){
+//            if (gradneed < 0) {
+//                world.heroBody.setAngularVelocity((-360 - gradneed)/5);
+//            } else {
+//                world.heroBody.setAngularVelocity((-360 + gradneed)/5);
+//            }
+//        } else if (gradneed <= 0 & Math.abs(gradneed) >= 180){
+//            if (gradneed < 0) {
+//                world.heroBody.setAngularVelocity(( 360 + gradneed)/5);
+//            } else {
+//                world.heroBody.setAngularVelocity(( 360 - gradneed)/5);
+//            }
+//        }
         if (Math.abs(gradneed) <= 0.1f){
             setMouseUpdate(false);
         }
@@ -344,5 +346,9 @@ public class WorldBuilder implements Screen {
     @Override
     public void dispose() {
         handler.dispose();
+    }
+
+    public static float getGrad(){
+        return gradneed;
     }
 }

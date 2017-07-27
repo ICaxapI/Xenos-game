@@ -9,33 +9,103 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * Created by Alex on 05.04.2017.
  */
 public class Animator {
-    private static final int FRAME_COLS = 6; // 6
-    private static final int FRAME_ROWS = 5; // 5
+    private final int FRAME_COLS = 10;
+    private final int FRAME_ROWS = 2;
+    private int angle;
+    private boolean stay = true;
+    private boolean reflect = true;
+    private float stayDuration = 2f;
+    private float walkDuraton = 0.2f;
 
-    private Animation<TextureRegion> walkAnimation; // #3
-    private Texture walkSheet; // #4
-    private TextureRegion[] walkFrames; // #5
-    private TextureRegion currentFrame; // #7
-    private float stateTime; // #8
+    private Animation<TextureRegion> animation;
+    private Texture walkSheet;
+    private TextureRegion[] walkFrames;
+    private TextureRegion[] stayFrames;
+    private TextureRegion currentFrame;
+    private float stateTime = 0f;
+    private TextureRegion[][] tmp;
 
-    public Animator(String textureurl) {
-        walkSheet = new Texture(Gdx.files.internal(textureurl)); // #9
-        TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth()/FRAME_COLS, walkSheet.getHeight()/FRAME_ROWS); // #10
-        walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
-        int index = 0;
-        for (int i = 0; i < FRAME_ROWS; i++) {
-            for (int j = 0; j < FRAME_COLS; j++) {
-                walkFrames[index++] = tmp[i][j];
-            }
-        }
-        walkAnimation = new Animation<>(0.025f, walkFrames); // #11
-        stateTime = 0f; // #13
+    public Animator(Texture texture) {
+        walkSheet = texture;
+        tmp = TextureRegion.split(walkSheet, walkSheet.getWidth()/FRAME_COLS, walkSheet.getHeight()/FRAME_ROWS);
+        walkFrames = new TextureRegion[8];
+        stayFrames = new TextureRegion[2];
+        updateFrames();
     }
 
+
     public TextureRegion needrender() {
-        stateTime += Gdx.graphics.getDeltaTime(); // #15
-        currentFrame = (TextureRegion) walkAnimation.getKeyFrame(stateTime, true); // #16
+        stateTime += Gdx.graphics.getDeltaTime();
+        currentFrame = (TextureRegion) animation.getKeyFrame(stateTime, true);
         return currentFrame;
     }
 
+    public void updateFrames(){
+        switch (angle){
+            case 1:
+                if(stay){
+                    System.arraycopy(tmp[1], 0, stayFrames, 0, 2);
+                    animation = new Animation<>(stayDuration, stayFrames);
+                    reflect = false;
+                } else {
+                    System.arraycopy(tmp[1], 2, walkFrames, 0, 8);
+                    animation = new Animation<>(walkDuraton, walkFrames);
+                    reflect = false;
+                    //walkFrames[j].flip(false, true);
+                }
+                break;
+            case 2:
+                if(stay){
+                    System.arraycopy(tmp[0], 0, stayFrames, 0, 2);
+                    animation = new Animation<>(stayDuration, stayFrames);
+                    reflect = false;
+                } else {
+                    System.arraycopy(tmp[0], 2, walkFrames, 0, 8);
+                    animation = new Animation<>(walkDuraton, walkFrames);
+                    reflect = false;
+                }
+                break;
+            case 3:
+                if(stay){
+                    System.arraycopy(tmp[0], 0, stayFrames, 0, 2);
+                    animation = new Animation<>(stayDuration, stayFrames);
+                    reflect = true;
+                } else {
+                    System.arraycopy(tmp[0], 2, walkFrames, 0, 8);
+                    animation = new Animation<>(walkDuraton, walkFrames);
+                    reflect = true;
+                }
+                break;
+            case 0:
+                if(stay){
+                    System.arraycopy(tmp[1], 0, stayFrames, 0, 2);
+                    animation = new Animation<>(stayDuration, stayFrames);
+                    reflect = true;
+                } else {
+                    System.arraycopy(tmp[1], 2, walkFrames, 0, 8);
+                    animation = new Animation<>(walkDuraton, walkFrames);
+                    reflect = true;
+                }
+                break;
+        }
+    }
+
+    public void setAngle(int angle) {
+        if (angle != this.angle) {
+            this.angle = angle;
+            updateFrames();
+        }
+    }
+
+    public void setStay(boolean stay) {
+        this.stay = stay;
+    }
+
+    public void setReflect(boolean reflect) {
+        this.reflect = reflect;
+    }
+
+    public boolean isReflect() {
+        return reflect;
+    }
 }

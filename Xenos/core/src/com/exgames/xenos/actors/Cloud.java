@@ -221,7 +221,7 @@ public class Cloud extends Actor{
                 }
                 worldObject.callDialog();
                 timerTaskStop = new MyTimerTaskStop();
-                //timer.scheduleAtFixedRate(timerTaskStop, 3000, 3000);
+                timer.scheduleAtFixedRate(timerTaskStop, 3000, 3000);
                 timerTask.cancel();
             }
         }

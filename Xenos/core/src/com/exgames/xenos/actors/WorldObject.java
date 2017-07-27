@@ -91,8 +91,10 @@ public class WorldObject extends Actor{
     public WorldObject(Texture texture, String world, String nameModel, BodyDef.BodyType bodyType, int density,
                        float sizeX, float sizeY, float linearDamping, float angularDamping, float restitution, float friction, float x, float y){
         this(world, nameModel, bodyType, density, linearDamping, angularDamping, restitution, friction);
-        mySprite = new Sprite(texture);
-        mySprite.setSize(sizeX, sizeY);
+        if (texture != null) {
+            mySprite = new Sprite(texture);
+            mySprite.setSize(sizeX, sizeY);
+        }
         body.fixedRotation = true;
         getBody().position.set(x, y);
     }
@@ -119,7 +121,7 @@ public class WorldObject extends Actor{
         WorldObject.canInterupted = canInterupted;
     }
 
-    private Vector2 getCordsScreen(){
+    public Vector2 getCordsScreen(){
         Vector2 heroWorld = WorldBuilder.getHero().getRect().getWorldCenter();
         Vector2 objWorld = getRect().getPosition().sub(getModelOrigin());
         float alignx = (objWorld.x - heroWorld.x)*(getStage().getWidth()/16f);
@@ -455,17 +457,40 @@ public class WorldObject extends Actor{
     }
     public void draw(Batch batch, float alpha){
         if (mySprite != null) {
-            Vector2 pos = rect.getPosition().sub(modelOrigin);
-            if (getStage() != null) {
-                Vector2 stageCords = getCordsScreen();
-                setPosition(stageCords.x, stageCords.y);
-                setSize(mySprite.getWidth() * getStage().getWidth()/16f, mySprite.getHeight() * getStage().getHeight()/9f);
+            if (!Objects.equals(getName(), "Hero")) {
+                Vector2 pos = rect.getPosition().sub(modelOrigin);
+                if (getStage() != null) {
+                    Vector2 stageCords = getCordsScreen();
+                    setPosition(stageCords.x, stageCords.y);
+                    setSize(mySprite.getWidth() * getStage().getWidth() / 16f, mySprite.getHeight() * getStage().getHeight() / 9f);
+                }
+                mySprite.setPosition(pos.x, pos.y);
+                mySprite.setOrigin(modelOrigin.x, modelOrigin.y);
+                mySprite.setRotation(rect.getAngle() * MathUtils.radiansToDegrees);
+                mySprite.setBounds(mySprite.getX(), mySprite.getY(), mySprite.getWidth(), mySprite.getHeight());
+                mySprite.draw(batch, alpha);
+            } else {
+                if (Math.abs(getRect().getLinearVelocity().x) + Math.abs(getRect().getLinearVelocity().y) > 0){
+                    WorldBuilder.getHero().getAnimator().setStay(false);
+                    WorldBuilder.getHero().getAnimator().updateFrames();
+                } else {
+                    WorldBuilder.getHero().getAnimator().setStay(true);
+                    WorldBuilder.getHero().getAnimator().updateFrames();
+                }
+                WorldBuilder.getHero().getAnimator().setAngle(Math.round(WorldBuilder.getGrad())/90);
+                mySprite.setRegion(WorldBuilder.getHero().getAnimator().needrender());
+                mySprite.setSize(0.58f,0.86f);
+                Vector2 pos = rect.getPosition().sub(modelOrigin);
+                mySprite.setPosition(pos.x, pos.y);
+                mySprite.setOrigin(modelOrigin.x, modelOrigin.y);
+                mySprite.setBounds(mySprite.getX(), mySprite.getY(), mySprite.getWidth(), mySprite.getHeight());
+                if (WorldBuilder.getHero().getAnimator().isReflect()) {
+                    mySprite.flip(true, false);
+                } else {
+                    mySprite.flip(false, false);
+                }
+                mySprite.draw(batch, alpha);
             }
-            mySprite.setPosition(pos.x, pos.y);
-            mySprite.setOrigin(modelOrigin.x, modelOrigin.y);
-            mySprite.setRotation(rect.getAngle() * MathUtils.radiansToDegrees);
-            mySprite.setBounds(mySprite.getX(), mySprite.getY(), mySprite.getWidth(), mySprite.getHeight());
-            mySprite.draw(batch, alpha);
         }
         //System.out.println(rect.getUserData());
     }
