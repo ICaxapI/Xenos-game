@@ -72,6 +72,7 @@ public class WorldBuilder implements Screen {
     protected static ArrayList<Body> listBody = new ArrayList<>();
     protected static ArrayList<WorldObject> listObjects = new ArrayList<>();
     public static Music music;
+    private boolean heroleftside = false;
 
     public RayHandler handler;
 
@@ -104,7 +105,7 @@ public class WorldBuilder implements Screen {
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
         texhero = new Texture(Gdx.files.internal("resources/texture/AnimationHero.png"));
-        texhero.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        texhero.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
         hero = new Hero(texhero, "NewWorld", "Hero", 100);
         heroBody = createNewObj(hero, heroBody, CATEGORY_PLAYER, MASK_PLAYER);
         heroBody.setUserData(new UserData(hero.getNameModel()));
@@ -126,7 +127,6 @@ public class WorldBuilder implements Screen {
         stage.addActor(hero);
         hero.setAnglex(0);// смещение до центра, если в физ модели отчёт начинается не с 0;0
         hero.setAngley(0);
-
 
 
         multiplexer.addProcessor(stage);
@@ -251,7 +251,11 @@ public class WorldBuilder implements Screen {
                 while (gradneed <= -359.99f) {
                     gradneed += 360;
                 }
+                if (gradneed == 0){
+                    gradneed = 359;
+                }
             }
+            heroleftside = gradneed <= 180;
         } else if (mouseUpdate){
             gradneed = (float) mouseGrad - (float) gradRect;
             while (gradneed >= 359.99f){
@@ -260,9 +264,15 @@ public class WorldBuilder implements Screen {
             while (gradneed <= -359.99f){
                 gradneed += 360;
             }
+            heroleftside = gradneed <= 180;
         } else {
-            gradneed = 180;
+            if (heroleftside) {
+                gradneed = 190;
+            } else {
+                gradneed = 350;
+            }
         }
+        System.out.println(gradneed);
 //        if (gradRect >= 0) {
 //            while (gradRect >= 360) {
 //                gradRect -= 360;

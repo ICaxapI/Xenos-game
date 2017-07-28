@@ -66,18 +66,18 @@ public class NewGame extends WorldBuilder {
         System.out.println("Время загрузки Json: " + kek.current);
 
         testFont = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
-                0.35f, 0.34f, 15, 0, 0, 1, -1, 0);
-        createNewObj(testFont, 0.35f, 0.34f, CATEGORY_WALL, MASK_WALL);
+                1.05f, 1.02f, 15, 0, 0, 1, -1, 0);
+        createNewObj(testFont, 1.05f, 1.02f, CATEGORY_WALL, MASK_WALL);
         testFont.addInputListener("Тест шрифта", font, stage);
 
         leks = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
-                0.35f, 0.34f, 15, 0, 0, 1, 2, 0);
-        createNewObj(leks, 0.35f, 0.34f, CATEGORY_WALL, MASK_WALL);
+                1.05f, 1.02f, 15, 0, 0, 1, 2, 0);
+        createNewObj(leks, 1.05f, 1.02f, CATEGORY_WALL, MASK_WALL);
         leks.addInputListener("Лекс", font, stage);
 
         glad = new WorldObject(metalBoxTex, "NewWorld", "metalBox", BodyDef.BodyType.DynamicBody, 100,
-                0.35f, 0.34f, 15, 0, 0, 1, 1, 0);
-        createNewObj(glad, 0.35f, 0.34f, CATEGORY_WALL, MASK_WALL);
+                1.05f, 1.02f, 15, 0, 0, 1, 1, 0);
+        createNewObj(glad, 1.05f, 1.02f, CATEGORY_WALL, MASK_WALL);
         glad.addInputListener("ГЛЭД", font, stage);
 
         //wall = new WorldObject(ship, "NewWorld", "Ship", BodyDef.BodyType.StaticBody, 100,

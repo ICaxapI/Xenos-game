@@ -473,13 +473,15 @@ public class WorldObject extends Actor{
                 if (Math.abs(getRect().getLinearVelocity().x) + Math.abs(getRect().getLinearVelocity().y) > 0){
                     WorldBuilder.getHero().getAnimator().setStay(false);
                     WorldBuilder.getHero().getAnimator().updateFrames();
+                    mySprite.setRegion(WorldBuilder.getHero().getAnimator().needrender());
+                    mySprite.setSize(0.875f,1.29166666666666666666666666666666666666f);
                 } else {
                     WorldBuilder.getHero().getAnimator().setStay(true);
                     WorldBuilder.getHero().getAnimator().updateFrames();
+                    mySprite.setRegion(WorldBuilder.getHero().getAnimator().needrender());
+                    mySprite.setSize(0.875f,1.29166666666666666666666666666666666666f);
                 }
                 WorldBuilder.getHero().getAnimator().setAngle(Math.round(WorldBuilder.getGrad())/90);
-                mySprite.setRegion(WorldBuilder.getHero().getAnimator().needrender());
-                mySprite.setSize(0.58f,0.86f);
                 Vector2 pos = rect.getPosition().sub(modelOrigin);
                 mySprite.setPosition(pos.x, pos.y);
                 mySprite.setOrigin(modelOrigin.x, modelOrigin.y);
