@@ -42,6 +42,17 @@ public class Animator {
 
     public void updateFrames(){
         switch (angle){
+            case 0:
+                if(stay){
+                    System.arraycopy(tmp[1], 0, stayFrames, 0, 2);
+                    animation = new Animation<>(stayDuration, stayFrames);
+                    reflect = true;
+                } else {
+                    System.arraycopy(tmp[1], 2, walkFrames, 0, 8);
+                    animation = new Animation<>(walkDuraton, walkFrames);
+                    reflect = true;
+                }
+                break;
             case 1:
                 if(stay){
                     System.arraycopy(tmp[1], 0, stayFrames, 0, 2);
@@ -72,17 +83,6 @@ public class Animator {
                     reflect = true;
                 } else {
                     System.arraycopy(tmp[0], 2, walkFrames, 0, 8);
-                    animation = new Animation<>(walkDuraton, walkFrames);
-                    reflect = true;
-                }
-                break;
-            case 0:
-                if(stay){
-                    System.arraycopy(tmp[1], 0, stayFrames, 0, 2);
-                    animation = new Animation<>(stayDuration, stayFrames);
-                    reflect = true;
-                } else {
-                    System.arraycopy(tmp[1], 2, walkFrames, 0, 8);
                     animation = new Animation<>(walkDuraton, walkFrames);
                     reflect = true;
                 }

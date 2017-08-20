@@ -24,6 +24,24 @@ public class MyContactListener implements ContactListener {
         if (fixB.getName().equals("Detector")){
             fixB.getDoor().setHeroInside(false);
         }
+        if (fixA.getName().equals("DetectorFloor")){
+            if (fixA.getWall().isInv()) {
+                WorldBuilder.getUpperAll().remove(fixA.getWall());
+                WorldBuilder.getUpperAll().remove(fixA.getWall2());
+                WorldBuilder.getListWalls().add(fixA.getWall2());
+                WorldBuilder.getListWalls().add(fixA.getWall());
+            }
+            fixA.getWall().fadeIn();
+        }
+        if (fixB.getName().equals("DetectorFloor")){
+            if (fixB.getWall().isInv()) {
+                WorldBuilder.getUpperAll().remove(fixB.getWall());
+                WorldBuilder.getUpperAll().remove(fixB.getWall2());
+                WorldBuilder.getListWalls().add(fixB.getWall2());
+                WorldBuilder.getListWalls().add(fixB.getWall());
+            }
+            fixB.getWall().fadeIn();
+        }
     }
 
     @Override
@@ -39,6 +57,26 @@ public class MyContactListener implements ContactListener {
             contact.setEnabled(false);
             fixB.getDoor().swith();
             fixB.getDoor().setHeroInside(true);
+        }
+        if (fixA.getName().equals("DetectorFloor")){
+            contact.setEnabled(false);
+            if (!fixA.getWall().isInv()) {
+                WorldBuilder.getListWalls().remove(fixA.getWall());
+                WorldBuilder.getListWalls().remove(fixA.getWall2());
+                WorldBuilder.getUpperAll().add(fixA.getWall2());
+                WorldBuilder.getUpperAll().add(fixA.getWall());
+            }
+            fixA.getWall().fadeOut();
+        }
+        if (fixB.getName().equals("DetectorFloor")){
+            contact.setEnabled(false);
+            if (!fixB.getWall().isInv()) {
+                WorldBuilder.getListWalls().remove(fixB.getWall());
+                WorldBuilder.getListWalls().remove(fixB.getWall2());
+                WorldBuilder.getUpperAll().add(fixB.getWall2());
+                WorldBuilder.getUpperAll().add(fixB.getWall());
+            }
+            fixB.getWall().fadeOut();
         }
     }
 

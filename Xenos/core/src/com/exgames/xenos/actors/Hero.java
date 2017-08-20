@@ -16,11 +16,11 @@ public class Hero extends WorldObject {
     private Animator animator;
 
     public Hero(Texture textureSheet, String world, String nameModel, int density){
-        super(null, world, nameModel, BodyDef.BodyType.DynamicBody, density, 0.875f,1.29166666666666666666666666666666666666f, 1f, 4f, 0f, 2f, 0 ,0);
+        super((Texture) null, world, nameModel, BodyDef.BodyType.DynamicBody, density, 0.875f,1.3f, 1f, 4f, 0f, 2f, 0 ,0);
         animator = new Animator(textureSheet);
         animator.updateFrames();
         mySprite = new Sprite(animator.needrender());
-        mySprite.setSize(0.875f,1.29166666666666666666666666666666666666f);
+        mySprite.setSize(0.875f,1.3f);
     }
 
     public void draw(Batch batch){

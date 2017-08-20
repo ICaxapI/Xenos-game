@@ -1,0 +1,145 @@
+AnimationHero.png
+size: 290, 86
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+00
+  rotate: false
+  xy: 0, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+01
+  rotate: false
+  xy: 29, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+02
+  rotate: false
+  xy: 58, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+03
+  rotate: false
+  xy: 87, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+04
+  rotate: false
+  xy: 116, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+05
+  rotate: false
+  xy: 145, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+06
+  rotate: false
+  xy: 174, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+07
+  rotate: false
+  xy: 203, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+08
+  rotate: false
+  xy: 232, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+09
+  rotate: false
+  xy: 261, 0
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+10
+  rotate: false
+  xy: 0, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+11
+  rotate: false
+  xy: 29, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+12
+  rotate: false
+  xy: 58, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+13
+  rotate: false
+  xy: 87, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+14
+  rotate: false
+  xy: 116, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+15
+  rotate: false
+  xy: 145, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+16
+  rotate: false
+  xy: 174, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+17
+  rotate: false
+  xy: 203, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+18
+  rotate: false
+  xy: 232, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1
+19
+  rotate: false
+  xy: 261, 43
+  size: 29, 43
+  orig: 29, 43
+  offset: 0, 0
+  index: -1

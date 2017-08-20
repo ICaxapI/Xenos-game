@@ -1,0 +1,40 @@
+shipheet.png
+size: 239, 544
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+corfloor
+  rotate: false
+  xy: 0, 0
+  size: 91, 544
+  orig: 91, 544
+  offset: 0, 0
+  index: -1
+kitchen
+  rotate: false
+  xy: 91, 0
+  size: 148, 211
+  orig: 148, 211
+  offset: 0, 0
+  index: -1
+roomfloor
+  rotate: false
+  xy: 91, 211
+  size: 148, 100
+  orig: 148, 100
+  offset: 0, 0
+  index: -1
+wall1
+  rotate: false
+  xy: 91, 311
+  size: 148, 96
+  orig: 148, 96
+  offset: 0, 0
+  index: -1
+wall2
+  rotate: false
+  xy: 91, 407
+  size: 148, 96
+  orig: 148, 96
+  offset: 0, 0
+  index: -1

@@ -51,6 +51,8 @@ public class WorldObject extends Actor{
     private Cloud cloudActor;
     private boolean movedCloud = true;
     private Dialog dialogCloud;
+    private float fade = 1f;
+    private boolean isInv = false;
 
     private short interuptedNumb;
     private String myName;
@@ -81,7 +83,7 @@ public class WorldObject extends Actor{
         fdef.restitution = restitution;
         fdef.friction = friction;
         fdef.density = density;
-        modelOrigin = loader.getOrigin(nameModel, WorldBuilder.PIXINMET).cpy();
+        modelOrigin = loader.getOrigin(nameModel, 0).cpy();
     }
     public WorldObject(String world, String nameModel, BodyDef.BodyType bodyType, int density, float linearDamping,
                        float angularDamping, float restitution, float friction, float x, float y){
@@ -93,6 +95,16 @@ public class WorldObject extends Actor{
         this(world, nameModel, bodyType, density, linearDamping, angularDamping, restitution, friction);
         if (texture != null) {
             mySprite = new Sprite(texture);
+            mySprite.setSize(sizeX, sizeY);
+        }
+        body.fixedRotation = true;
+        getBody().position.set(x, y);
+    }
+    public WorldObject(Sprite texture, String world, String nameModel, BodyDef.BodyType bodyType, int density,
+                       float sizeX, float sizeY, float linearDamping, float angularDamping, float restitution, float friction, float x, float y){
+        this(world, nameModel, bodyType, density, linearDamping, angularDamping, restitution, friction);
+        if (texture != null) {
+            mySprite = texture;
             mySprite.setSize(sizeX, sizeY);
         }
         body.fixedRotation = true;
@@ -455,7 +467,27 @@ public class WorldObject extends Actor{
         mySprite.setBounds(mySprite.getX(), mySprite.getY(),  mySprite.getWidth(), mySprite.getHeight());
         super.act(delta);
     }
+    public void fadeIn(){
+        isInv = false;
+    }
+    public void fadeOut(){
+        isInv = true;
+    }
+
     public void draw(Batch batch, float alpha){
+        if (isInv & fade > 0){
+            if (fade - Gdx.graphics.getDeltaTime() > 0) {
+                fade -= Gdx.graphics.getDeltaTime();
+            } else {
+                fade = 0;
+            }
+        } else if (!isInv & fade < 1){
+            if (fade + Gdx.graphics.getDeltaTime() < 1) {
+                fade += Gdx.graphics.getDeltaTime();
+            } else {
+                fade = 1;
+            }
+        }
         if (mySprite != null) {
             if (!Objects.equals(getName(), "Hero")) {
                 Vector2 pos = rect.getPosition().sub(modelOrigin);
@@ -468,18 +500,18 @@ public class WorldObject extends Actor{
                 mySprite.setOrigin(modelOrigin.x, modelOrigin.y);
                 mySprite.setRotation(rect.getAngle() * MathUtils.radiansToDegrees);
                 mySprite.setBounds(mySprite.getX(), mySprite.getY(), mySprite.getWidth(), mySprite.getHeight());
-                mySprite.draw(batch, alpha);
+                mySprite.draw(batch, fade);
             } else {
                 if (Math.abs(getRect().getLinearVelocity().x) + Math.abs(getRect().getLinearVelocity().y) > 0){
                     WorldBuilder.getHero().getAnimator().setStay(false);
                     WorldBuilder.getHero().getAnimator().updateFrames();
                     mySprite.setRegion(WorldBuilder.getHero().getAnimator().needrender());
-                    mySprite.setSize(0.875f,1.29166666666666666666666666666666666666f);
+                    mySprite.setSize(0.875f,1.3f);
                 } else {
                     WorldBuilder.getHero().getAnimator().setStay(true);
                     WorldBuilder.getHero().getAnimator().updateFrames();
                     mySprite.setRegion(WorldBuilder.getHero().getAnimator().needrender());
-                    mySprite.setSize(0.875f,1.29166666666666666666666666666666666666f);
+                    mySprite.setSize(0.875f,1.3f);
                 }
                 WorldBuilder.getHero().getAnimator().setAngle(Math.round(WorldBuilder.getGrad())/90);
                 Vector2 pos = rect.getPosition().sub(modelOrigin);
@@ -491,7 +523,7 @@ public class WorldObject extends Actor{
                 } else {
                     mySprite.flip(false, false);
                 }
-                mySprite.draw(batch, alpha);
+                mySprite.draw(batch, fade);
             }
         }
         //System.out.println(rect.getUserData());
@@ -547,5 +579,12 @@ public class WorldObject extends Actor{
 
     public String getMyName() {
         return myName;
+    }
+
+    public Sprite getMySprite(){
+        return mySprite;
+    }
+    public boolean isInv(){
+        return isInv;
     }
 }

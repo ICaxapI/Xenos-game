@@ -41,11 +41,13 @@ public class WorldBuilder implements Screen {
     final public static short CATEGORY_WALL = 0x0004;
     final public static short CATEGORY_LIGHT = 0x0008;
     final public static short CATEGORY_OBJECTS = 0x0016;
+    final public static short CATEGORY_FLOOR = 0x0032;
     final public static short MASK_SENSOR = CATEGORY_PLAYER | CATEGORY_OBJECTS;
     final public static short MASK_PLAYER = -1;
     final public static short MASK_WALL = CATEGORY_LIGHT | CATEGORY_PLAYER | CATEGORY_OBJECTS;
     final public static short MASK_LIGHT = CATEGORY_WALL | CATEGORY_OBJECTS | CATEGORY_PLAYER;
     final public static short MASK_OBJECTS = -1;
+    final public static short MASK_FLOOR = -1;
 
     public static final float PIXINMET = 1f/23f;
     private static Camera camera;
@@ -71,8 +73,11 @@ public class WorldBuilder implements Screen {
     private Vector2 heroVector;
     protected static ArrayList<Body> listBody = new ArrayList<>();
     protected static ArrayList<WorldObject> listObjects = new ArrayList<>();
+    protected static ArrayList<WorldObject> listWalls = new ArrayList<>();
+    protected static ArrayList<WorldObject> upperAll = new ArrayList<>();
     public static Music music;
     private boolean heroleftside = false;
+    private Body lastBody;
 
     public RayHandler handler;
 
@@ -81,7 +86,7 @@ public class WorldBuilder implements Screen {
 
     public WorldBuilder(Game game, SpriteBatch batch, Viewport viewport){
         this.game = game;
-        this.camera = new OrthographicCamera(16,9);
+        this.camera = new OrthographicCamera(16f,9f);
         camera.position.set(new Vector3(camera.viewportWidth/2f,camera.viewportHeight/2f,0));
         this.batch = batch;
         this.viewport = viewport;
@@ -95,12 +100,12 @@ public class WorldBuilder implements Screen {
         stage = new Stage(viewport);
         world = new com.badlogic.gdx.physics.box2d.World(new Vector2(0,0),true);
         world.setContactListener(new MyContactListener());
-//        renderer = new Box2DDebugRenderer();
-//        renderer.setDrawBodies(true);
-//        renderer.setDrawContacts(true);
-//        renderer.setDrawInactiveBodies(true);
-//        renderer.setDrawJoints(true);
-//        renderer.setDrawVelocities(true);
+        renderer = new Box2DDebugRenderer();
+        renderer.setDrawBodies(true);
+        renderer.setDrawContacts(true);
+        renderer.setDrawInactiveBodies(true);
+        renderer.setDrawJoints(true);
+        renderer.setDrawVelocities(true);
         inputController = new InputController(this);
         centerx = Gdx.graphics.getWidth()/2f;
         centery = Gdx.graphics.getHeight()/2f;
@@ -179,6 +184,7 @@ public class WorldBuilder implements Screen {
     }
     protected void createNewObj(WorldObject object, float sizex, float sizey, short category, short mask){
         Body body = world.createBody(object.getBody());
+        lastBody = body;
         listBody.add(listBody.size(), body);
         listObjects.add(listObjects.size(), object);
         object.setRect(body);
@@ -191,7 +197,20 @@ public class WorldBuilder implements Screen {
             object.getFixture(i).setFilterData(filter);
         }
     }
-
+    protected void createNewWall(WorldObject object, float sizex, float sizey, short category, short mask){
+        Body body = world.createBody(object.getBody());
+        listBody.add(listBody.size(), body);
+        listWalls.add(listWalls.size(), object);
+        object.setRect(body);
+        object.attFix(sizex);
+        body.setUserData(new UserData(object.getNameModel()));
+        Filter filter = new Filter();
+        filter.categoryBits = category;
+        filter.maskBits = mask;
+        for (int i = 0; i < object.getFixtureLastIndex(); i++){
+            object.getFixture(i).setFilterData(filter);
+        }
+    }
     public Camera getCamera(){
         return this.camera;
     }
@@ -216,12 +235,18 @@ public class WorldBuilder implements Screen {
         for (int i = 0; i < listObjects.size(); i++) {
             listObjects.get(i).draw(batch);
         }
+        for (int i = 0; i < listWalls.size(); i++) {
+            listWalls.get(i).draw(batch);
+        }
         hero.draw(batch);
+        for (int i = 0; i < upperAll.size(); i++) {
+            upperAll.get(i).draw(batch);
+        }
         batch.end();
         handler.update();
         handler.render();
         handler.setCombinedMatrix((OrthographicCamera) camera);
-//        renderer.render(world,camera.combined);
+        renderer.render(world,camera.combined);
         stage.act(delta);
         stage.draw();
         //System.out.println(world.getFixtureCount());
@@ -272,7 +297,6 @@ public class WorldBuilder implements Screen {
                 gradneed = 350;
             }
         }
-        System.out.println(gradneed);
 //        if (gradRect >= 0) {
 //            while (gradRect >= 360) {
 //                gradRect -= 360;
@@ -361,5 +385,17 @@ public class WorldBuilder implements Screen {
 
     public static float getGrad(){
         return gradneed;
+    }
+
+    public Body getLastBody() {
+        return lastBody;
+    }
+
+    public static ArrayList<WorldObject> getListWalls(){
+        return listWalls;
+    }
+
+    public static ArrayList<WorldObject> getUpperAll(){
+        return upperAll;
     }
 }
