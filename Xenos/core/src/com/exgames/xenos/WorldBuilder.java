@@ -10,6 +10,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
@@ -163,9 +164,7 @@ public class WorldBuilder implements Screen {
         Filter filter = new Filter();
         filter.categoryBits = category;
         filter.maskBits = mask;
-        for (int i = 0; i < detector.getFixtureLastIndex(); i++){
-            detector.getFixture(i).setFilterData(filter);
-        }
+        detector.getRect().getFixtureList().forEach(fixture -> fixture.setFilterData(filter));
     }
 
     protected void createNewObj(WorldObject object, short category, short mask){
@@ -232,16 +231,19 @@ public class WorldBuilder implements Screen {
         world.step(1/fps,5,5);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        for (int i = 0; i < listObjects.size(); i++) {
-            listObjects.get(i).draw(batch);
-        }
-        for (int i = 0; i < listWalls.size(); i++) {
-            listWalls.get(i).draw(batch);
-        }
+//        for (int i = 0; i < listObjects.size(); i++) {
+//            listObjects.get(i).draw(batch);
+//        }
+//        for (int i = 0; i < listWalls.size(); i++) {
+//            listWalls.get(i).draw(batch);
+//        }
+        listObjects.forEach(sprite -> sprite.draw(batch));
+        listWalls.forEach(sprite -> sprite.draw(batch));
         hero.draw(batch);
-        for (int i = 0; i < upperAll.size(); i++) {
-            upperAll.get(i).draw(batch);
-        }
+//        for (int i = 0; i < upperAll.size(); i++) {
+//            upperAll.get(i).draw(batch);
+//        }
+        upperAll.forEach(sprite -> sprite.draw(batch));
         batch.end();
         handler.update();
         handler.render();
